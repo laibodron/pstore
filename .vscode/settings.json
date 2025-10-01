@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": ["backend", "webapp", "shared"],
+  "stylelint.validate": ["scss", "css"]
+}

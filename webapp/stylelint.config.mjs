@@ -1,0 +1,31 @@
+// import stylelintConfigStandardScss from "stylelint-config-standard-scss";
+// import stylelintConfigPrettierScss from "stylelint-config-prettier-scss";
+
+/** @type {import('stylelint').Config} */
+export default {
+  extends: ["stylelint-config-standard-scss", "stylelint-config-prettier-scss"],
+  rules: {
+    "scss/at-import-no-partial-leading-underscore": null,
+    "selector-class-pattern": null,
+    "scss/dollar-variable-pattern": null,
+    "scss/at-mixin-pattern": [
+      /^[a-z][a-zA-Z0-9]+$/,
+      {
+        message: "Expected mixin to be camelCase"
+      }
+    ],
+    "selector-pseudo-element-colon-notation": "single",
+    "scss/dollar-variable-empty-line-before": null,
+    "block-no-empty": null,
+    "declaration-empty-line-before": null,
+    "color-function-notation": null,
+    "alpha-value-notation": null,
+    "no-descending-specificity": null,
+    "scss/double-slash-comment-empty-line-before": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "shorthand-property-no-redundant-values": null,
+    "color-hex-length": null,
+    "no-empty-source": null,
+    "scss/load-no-partial-leading-underscore": null,
+  }
+}
