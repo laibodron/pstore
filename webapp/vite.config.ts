@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
       port: +env.PORT,
     },
     define: {
-      'process.env': JSON.stringify(publicEnv),
+      'process.env': publicEnv,
     },
   }
 })

@@ -1,7 +1,5 @@
 import generalConfig from '../eslint.config.mjs';
 import { defineConfig } from "eslint/config";
-import importPlugin from 'eslint-plugin-import';
-import simpleImportSort from "eslint-plugin-simple-import-sort";
 import { builtinModules } from "module";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -18,10 +16,6 @@ export default defineConfig([
         tsconfigRootDir: __dirname,
       }
     },
-    plugins: {
-      import: importPlugin,
-      "simple-import-sort": simpleImportSort,
-    },
     settings: {
       'import/resolver': {
         node: {
@@ -30,7 +24,7 @@ export default defineConfig([
       },
     },
     rules: {
-      "no-console": "error",
+      // "no-console": "error",
       'import/no-restricted-paths': [
         'error',
         {

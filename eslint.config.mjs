@@ -11,7 +11,7 @@ import importPlugin from "eslint-plugin-import";
 
 export default [
   {
-    ignores: ['node_modules', 'dist', "**/*.config.mjs", "**/*.config.js", "tsconfig*.json"],
+    ignores: ['node_modules', 'dist', "**/*.config.mjs", "**/*.config.js", "tsconfig*.json", "**/*.config.ts"],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
@@ -57,6 +57,7 @@ export default [
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
 
+      "no-unused-vars": "off",
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/strict-boolean-expressions": "off",
       "@typescript-eslint/prefer-nullish-coalescing": "off",
@@ -81,12 +82,12 @@ export default [
           skipStrings: true
         }
       ],
-      // "no-console": [
-      //   "error",
-      //   {
-      //     allow: ["info", "error", "warn"]
-      //   }
-      // ],
+      "no-console": [
+        "error",
+        {
+          allow: ["info", "error", "warn"]
+        }
+      ],
       "no-irregular-whitespace": "off" // без этого куча ошибок
     },
     settings: {

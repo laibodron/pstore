@@ -30,5 +30,5 @@
     "moduleResolution": "nodenext",
     "target": "ES2021"
   },
-  "include": ["src"]
+  "include": ["src"] //"./prisma.config.ts"
 }

@@ -2,15 +2,48 @@
   "name": "@pstore/backend",
   "private": "true",
   "version": "0.0.0",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development ts-node-dev --watch ./src/emails/dist,./.env --rs --exit-child ./src/index.ts",
+    "build-ts": "rimraf ./dist && tsc --build ./tsconfig.build.json",
+    "build": "pnpm build-ts",
+    "start": "cross-env NODE_ENV=production node ./dist/backend/src/index.js",
+    "pmd": "prisma migrate dev",
+    "pmt": "dotenv -e ./.env.test prisma migrate deploy",
+    "pmp": "dotenv -e ./.env.production prisma migrate deploy",
+    "pgc": "prisma generate",
+    "types": "tsc --noEmit --project ./tsconfig.json",
+    "prettify": "prettier --log-level warn --cache --write '{src/**/*,*}.{ts,tsx,js,json,yml,scss}' '!**/{node_modules,dist}/**/*'",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --ext .ts .",
+    "prepare": "pnpm pgc && ts-patch install -s"
+  },
   "dependencies": {
+    "@prisma/client": "^6.16.3",
     "@pstore/shared": "workspace:*",
     "@pstore/webapp": "workspace:*",
+    "@trpc/server": "^11.6.0",
+    "axios": "^1.12.2",
+    "cors": "^2.8.5",
+    "debug": "^4.4.3",
     "dotenv": "17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "fast-glob": "^3.3.3",
+    "lodash": "^4.17.21",
+    "picocolors": "^1.1.1",
+    "prisma": "^6.16.3",
+    "serialize-error": "^12.0.0",
+    "superjson": "^2.2.2",
+    "triple-beam": "^1.4.1",
+    "trpc-playground": "^1.0.4",
+    "winston": "^3.18.3",
+    "yaml": "^2.8.1",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/debug": "^4.1.12",
     "@types/express": "^5.0.3",
+    "@types/lodash": "^4.17.20",
     "@types/node": "24.6.1",
-    "eslint-plugin-simple-import-sort": "^12.1.1"
+    "@types/triple-beam": "^1.3.5"
   }
 }
