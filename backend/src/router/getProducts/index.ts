@@ -1,6 +1,8 @@
 import { trpcLoggedProcedure } from '../../lib/trpc'
 
-export const getProductsTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) => {
+import { zGetProductsInput } from './input'
+
+export const getProductsTrpcRoute = trpcLoggedProcedure.input(zGetProductsInput).query(async ({ ctx, input }) => {
   const count = await ctx.prisma.product.count()
   const products = await ctx.prisma.product.findMany()
 

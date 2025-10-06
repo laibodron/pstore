@@ -8,6 +8,8 @@ import LogInModal from './components/LogInModal'
 import ProfileLayout from './components/ProfileLayout'
 import SignInModal from './components/SignInModal'
 import * as routes from './lib/routes'
+import { TrpcProvider } from './lib/trpc'
+import AdminPanel from './pages/AdminPanel'
 import CartPage from './pages/CartPage'
 import CatalogPage from './pages/CatalogPage'
 import MainPage from './pages/MainPage'
@@ -19,25 +21,28 @@ import WishlistPage from './pages/WishlistPage'
 
 function App() {
   return (
-    <BrowserRouter>
-      <LogInModal />
-      <SignInModal />
-      <ChangePasswordModal />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path={routes.getMainPageRoute.definition} element={<MainPage />} />
-          <Route path={routes.getCatalogPageRoute.definition} element={<CatalogPage />} />
-          <Route path={routes.getViewItemPageRoute.definition} element={<ViewItemPage />} />
-          <Route path={routes.getWishlistPageRoute.definition} element={<WishlistPage />} />
-          <Route path={routes.getCartPageRoute.definition} element={<CartPage />} />
-          <Route element={<ProfileLayout />}>
-            <Route path={routes.getProfileOrdersPageRoute.definition} element={<ProfileOrdersPage />} />
-            <Route path={routes.getProfileSettingsPageRoute.definition} element={<ProfileSettingsPage />} />
+    <TrpcProvider>
+      <BrowserRouter>
+        <LogInModal />
+        <SignInModal />
+        <ChangePasswordModal />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path={routes.getMainPageRoute.definition} element={<MainPage />} />
+            <Route path={routes.getCatalogPageRoute.definition} element={<CatalogPage />} />
+            <Route path={routes.getViewItemPageRoute.definition} element={<ViewItemPage />} />
+            <Route path={routes.getWishlistPageRoute.definition} element={<WishlistPage />} />
+            <Route path={routes.getCartPageRoute.definition} element={<CartPage />} />
+            <Route element={<ProfileLayout />}>
+              <Route path={routes.getProfileOrdersPageRoute.definition} element={<ProfileOrdersPage />} />
+              <Route path={routes.getProfileSettingsPageRoute.definition} element={<ProfileSettingsPage />} />
+              <Route path={routes.getAdminPanelPageRoute.definition} element={<AdminPanel />} />
+            </Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </TrpcProvider>
   )
 }
 

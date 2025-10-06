@@ -1,7 +1,7 @@
 import { Card, Col, Container, Nav, Row } from 'react-bootstrap'
 import { NavLink, Outlet } from 'react-router-dom'
 
-import { getProfileOrdersPageRoute, getProfileSettingsPageRoute } from '../../lib/routes'
+import { getAdminPanelPageRoute, getProfileOrdersPageRoute, getProfileSettingsPageRoute } from '../../lib/routes'
 import { Icon } from '../Icon'
 
 const ProfileLayout = () => {
@@ -18,6 +18,9 @@ const ProfileLayout = () => {
                 </Nav.Link>
                 <Nav.Link as={NavLink} to={getProfileSettingsPageRoute()}>
                   <Icon size={26} name="userProfile" /> Настройки профиля
+                </Nav.Link>
+                <Nav.Link as={NavLink} to={getAdminPanelPageRoute()}>
+                  <Icon size={26} name="admin" /> Admin panel
                 </Nav.Link>
               </Nav>
             </Card.Body>

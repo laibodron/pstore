@@ -1,12 +1,27 @@
-import { Button, Carousel, Col, Row } from 'react-bootstrap'
+import { Button, Carousel, Col, Row, Spinner } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
 
 import { Icon } from '../../components/Icon'
 import PageWithTitle from '../../components/PageWithTitle'
+import { trpc } from '../../lib/trpc'
 
 const ViewItemPage = () => {
+  const { data, error, isLoading } = trpc.getProduct.useQuery({ productId: 'b4904cd5-6ce1-454f-8da8-5dd5727d1ba6' })
+
+  if (isLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
+  }
+
   return (
-    <PageWithTitle title="Motorola Z">
+    <PageWithTitle title={data?.product.title}>
       <Row>
         <Col md={6}>
           <Carousel data-bs-theme="dark" interval={null}>
@@ -28,7 +43,7 @@ const ViewItemPage = () => {
           </Carousel>
         </Col>
         <Col className="d-flex justify-content-end">
-          <div className="me-4 fs-3 h-auto">1234$</div>
+          <div className="me-4 fs-3 h-auto">{data?.product.price}$</div>
           <div>
             <Icon name="heart" size={24} className="me-4" />
             <Button variant="primary">Купить</Button>
@@ -37,10 +52,7 @@ const ViewItemPage = () => {
       </Row>
       <Row className="fs-6 mt-4">
         <h1 className="fs-4 mb-3">Description</h1>
-        Description Description Description Description Description Description Description Description Description
-        Description Description Description Description Description Description Description Description Description
-        Description Description Description Description Description Description Description Description Description
-        Description Description Description Description
+        {data?.product.description}
       </Row>
       <Row className="fs-6 mt-4">
         <h1 className="fs-4 mb-3">Specifications</h1>

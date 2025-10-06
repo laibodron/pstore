@@ -12,4 +12,6 @@ export const getCartPageRoute = pgr(() => '/cart')
 
 export const getProfileOrdersPageRoute = pgr(() => '/profile/orders')
 
-export const getProfileSettingsPageRoute = pgr(() => '/profile/profile')
+export const getProfileSettingsPageRoute = pgr(() => '/profile/settings')
+
+export const getAdminPanelPageRoute = pgr(() => '/profile/admin')
