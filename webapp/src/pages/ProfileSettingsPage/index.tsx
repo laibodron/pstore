@@ -1,7 +1,11 @@
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
 
-const ProfileSettingsPage = () => {
+import { withPageWrapper } from '../../lib/pageWrapper'
+
+const ProfileSettingsPage = withPageWrapper({
+  title: 'Profile Settings',
+})(() => {
   return (
     <>
       <Row className="mb-4">
@@ -58,6 +62,6 @@ const ProfileSettingsPage = () => {
       </Row>
     </>
   )
-}
+})
 
 export default ProfileSettingsPage

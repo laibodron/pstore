@@ -22,7 +22,6 @@ export const zNickRequired = zStringRequired.regex(
 )
 export const zStringMin = (min: number) => zStringRequired.min(min, `Text should be at least ${min} characters long`)
 export const zPasswordsMustBeTheSame =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (passwordFieldName: string, passwordAgainFieldName: string) => (val: any, ctx: z.RefinementCtx) => {
     if (val[passwordFieldName] !== val[passwordAgainFieldName]) {
       ctx.addIssue({

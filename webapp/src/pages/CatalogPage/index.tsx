@@ -1,11 +1,42 @@
 import { Accordion, Button, Col, Form, Pagination, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 import HorizontalCard from '../../components/HorizontalCard'
 import PageWithTitle from '../../components/PageWithTitle'
+import { withPageWrapper } from '../../lib/pageWrapper'
+import { getCartRoute, getViewItemRoute } from '../../lib/routes'
+import useCartStore from '../../lib/store/useCart'
+import { trpc } from '../../lib/trpc'
 
-const CatalogPage = () => {
+const CatalogPage = withPageWrapper({
+  useQuery: () => trpc.getProducts.useQuery(),
+  setProps: ({ queryResult, ctx, checkExists }) => ({
+    products: checkExists(queryResult.data.products, 'Products not found'),
+    countProd: checkExists(queryResult.data.count, 'Count not found'),
+    me: ctx.me,
+  }),
+
+  title: 'Catalog',
+})(({ products, countProd, me }) => {
+  const navigate = useNavigate()
+  const addToCart = useCartStore((state) => state.addItem)
+  const cartList = useCartStore((state) => state.items)
+  const productsWithCart = products.map((product) => ({
+    ...product,
+    countInCart: cartList.find((i) => i.id === product.id)?.quantity || 0,
+  }))
+
+  const callbacks = {
+    onBuy: (id: string) => {
+      if (productsWithCart.find((p) => p.id === id)?.countInCart) {
+        navigate(getCartRoute())
+      } else {
+        addToCart(id)
+      }
+    }
+  }
   return (
-    <PageWithTitle title="Catalog" subtitle="1234 products">
+    <PageWithTitle title="Catalog" subtitle={`${countProd} products`}>
       <Row>
         <Col>
           <Accordion defaultActiveKey="0" alwaysOpen>
@@ -55,10 +86,14 @@ const CatalogPage = () => {
                 <option value="2">Two</option>
                 <option value="3">Three</option>
               </Form.Select>
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
-              <HorizontalCard />
+              {productsWithCart.map((product) => (
+                <HorizontalCard
+                  onBuy={() => callbacks.onBuy(product.id)}
+                  link={getViewItemRoute({ itemId: product.id })}
+                  key={product.id}
+                  product={product}
+                />
+              ))}
 
               <div className="mt-3 d-flex justify-content-center">
                 <Button variant="primary">More</Button>
@@ -88,6 +123,6 @@ const CatalogPage = () => {
       </Row>
     </PageWithTitle>
   )
-}
+})
 
 export default CatalogPage

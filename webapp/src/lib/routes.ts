@@ -1,17 +1,19 @@
 import { pgr } from '../utils/pumpGetRoute'
 
-export const getMainPageRoute = pgr(() => '/')
+export const getMainRoute = pgr(() => '/')
 
-export const getCatalogPageRoute = pgr(() => '/catalog')
+export const getCatalogRoute = pgr(() => '/catalog')
 
-export const getViewItemPageRoute = pgr({itemId: true}, ({ itemId }) => `/product/${itemId}`)
+export const getViewItemRoute = pgr({itemId: true}, ({ itemId }) => `/product/${itemId}`)
 
-export const getWishlistPageRoute = pgr(() => '/wishlist')
+export const getWishlistRoute = pgr(() => '/wishlist')
 
-export const getCartPageRoute = pgr(() => '/cart')
+export const getCartRoute = pgr(() => '/cart')
 
-export const getProfileOrdersPageRoute = pgr(() => '/profile/orders')
+export const getProfileOrdersRoute = pgr(() => '/profile/orders')
 
-export const getProfileSettingsPageRoute = pgr(() => '/profile/settings')
+export const getProfileSettingsRoute = pgr(() => '/profile/settings')
 
-export const getAdminPanelPageRoute = pgr(() => '/profile/admin')
+export const getAdminPanelRoute = pgr(() => '/profile/admin')
+
+export const getSignOutRoute = pgr(() => '/signout')

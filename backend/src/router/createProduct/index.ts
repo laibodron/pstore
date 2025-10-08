@@ -10,7 +10,7 @@ export const createProductTrpcRoute = trpcLoggedProcedure
       where: {
         article: input.article,
         title: input.title,
-        price: input.price,
+        price: +input.price,
         description: input.description,
       },
     })
@@ -20,7 +20,7 @@ export const createProductTrpcRoute = trpcLoggedProcedure
     }
 
     await ctx.prisma.product.create({
-      data: { ...input },
+      data: { ...input, price: +input.price },
     })
 
     return true

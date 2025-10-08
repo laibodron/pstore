@@ -68,7 +68,6 @@ export const winstonLogger = winston.createLogger({
   ],
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LoggerMetaData = Record<string, any> | undefined
 const prettifyMeta = (meta: LoggerMetaData): LoggerMetaData => {
   return deepMap(meta, ({ key, value }) => {
@@ -98,7 +97,6 @@ export const logger = {
     }
     winstonLogger.info(message, { logType, ...prettifyMeta(meta) })
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: (logType: string, error: any, meta?: LoggerMetaData) => {
     const isNativeExpectedError = error instanceof ExpectedError
     const isTrpcExpectedError = error instanceof TRPCError && error.cause instanceof ExpectedError

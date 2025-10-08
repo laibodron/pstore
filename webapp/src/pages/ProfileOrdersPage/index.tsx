@@ -1,6 +1,10 @@
 import { Col, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
 
-const ProfileOrdersPage = () => {
+import { withPageWrapper } from '../../lib/pageWrapper'
+
+const ProfileOrdersPage = withPageWrapper({
+  title: 'My Orders',
+})(() => {
   return (
     <>
       <Row className="mb-4">
@@ -29,6 +33,6 @@ const ProfileOrdersPage = () => {
       </Row>
     </>
   )
-}
+})
 
 export default ProfileOrdersPage

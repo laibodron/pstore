@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 type ReplaceFn = ({ path, key, value }: { path: string; key: string; value: Value }) => Value
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type Value = object | number | string | boolean | null | undefined | ((...args: any[]) => any) | symbol | any[]
 
 const recursion = ({
@@ -13,7 +13,6 @@ const recursion = ({
 }: {
   input: Value
   replaceFn: ReplaceFn
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   seen: WeakSet<any>
   pathStartsWith: string
   parentKey: string
@@ -41,7 +40,6 @@ const recursion = ({
     )
   }
   if (_.isObject(result)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const object: any = {}
     for (const [key, value] of Object.entries(result)) {
       object[key] = recursion({

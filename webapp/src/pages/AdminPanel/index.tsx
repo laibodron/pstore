@@ -1,29 +1,31 @@
 import { zCreateProductInput } from '@pstore/backend/src/router/createProduct/input'
-import { useFormik } from 'formik'
-import { Button, Form } from 'react-bootstrap'
-import { toFormikValidate } from 'zod-formik-adapter'
+import { Alert, Button, Form } from 'react-bootstrap'
 
+import { useForm } from '../../lib/form'
+import { withPageWrapper } from '../../lib/pageWrapper'
 import { trpc } from '../../lib/trpc'
 
-const AdminPanel = () => {
+const AdminPanel = withPageWrapper({
+  title: 'Admin Panel',
+  // authorizedOnly: true,
+})(() => {
   const createProduct = trpc.createProduct.useMutation()
-  const formik = useFormik({
+
+  const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
       article: '',
       title: '',
-      price: 0,
+      price: '',
       description: '',
     },
-    validate: toFormikValidate(zCreateProductInput),
+    validationSchema: zCreateProductInput,
     onSubmit: async (values) => {
-      try {
-        await createProduct.mutateAsync(values)
-        formik.resetForm()
-      } catch (e) {
-        console.error('Ошибка при создании продукта', e)
-      }
+      await createProduct.mutateAsync(values)
     },
+    successMessage: 'Продукт успешно создан',
+    showValidationAlert: true,
   })
+
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
       <Form.Group className="mb-3">
@@ -40,7 +42,7 @@ const AdminPanel = () => {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>title</Form.Label>
+        <Form.Label>Title</Form.Label>
         <Form.Control
           type="text"
           name="title"
@@ -49,16 +51,22 @@ const AdminPanel = () => {
           onBlur={formik.handleBlur}
           isInvalid={formik.touched.title && !!formik.errors.title}
         />
+
         <Form.Control.Feedback type="invalid">{formik.errors.title}</Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>price</Form.Label>
+        <Form.Label>Price</Form.Label>
         <Form.Control
           type="text"
           name="price"
           value={formik.values.price}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            let value = e.target.value.replace(',', '.')
+            value = value.replace(/[^0-9.]/g, '')
+            value = value.replace(/(\..*)\./g, '$1')
+            formik.setFieldValue('price', value)
+          }}
           onBlur={formik.handleBlur}
           isInvalid={formik.touched.price && !!formik.errors.price}
         />
@@ -66,9 +74,9 @@ const AdminPanel = () => {
       </Form.Group>
 
       <Form.Group className="mb-3">
-        <Form.Label>description</Form.Label>
+        <Form.Label>Description</Form.Label>
         <Form.Control
-          type="text"
+          as="textarea"
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
@@ -77,12 +85,12 @@ const AdminPanel = () => {
         />
         <Form.Control.Feedback type="invalid">{formik.errors.description}</Form.Control.Feedback>
       </Form.Group>
-
-      <Button type="submit" variant="primary">
+      <Alert {...alertProps} className="mt-3" />
+      <Button {...buttonProps} variant="primary">
         Отправить
       </Button>
     </Form>
   )
-}
+})
 
 export default AdminPanel

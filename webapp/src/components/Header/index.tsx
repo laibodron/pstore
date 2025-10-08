@@ -44,7 +44,7 @@ const Header = () => {
                 Каталог
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item as={Link} to={routes.getViewItemPageRoute({ itemId: '42' })}>
+                <Dropdown.Item as={Link} to={routes.getViewItemRoute({ itemId: '42' })}>
                   Item
                 </Dropdown.Item>
                 <Dropdown.Item as={Link} to="/catalog">
@@ -63,10 +63,10 @@ const Header = () => {
 
           {/* ПРАВАЯ ЧАСТЬ */}
           <div className="d-flex align-items-center gap-3 text-white ">
-            <Nav.Link className="px-2" as={Link} to={routes.getWishlistPageRoute()}>
+            <Nav.Link className="px-2" as={Link} to={routes.getWishlistRoute()}>
               <Icon size={28} name="heart" />
             </Nav.Link>
-            <Nav.Link as={Link} to={routes.getCartPageRoute()}>
+            <Nav.Link as={Link} to={routes.getCartRoute()}>
               <Icon size={28} name="cart" />
             </Nav.Link>
             <DropdownButton
@@ -75,14 +75,14 @@ const Header = () => {
               title={<Icon size={28} name="userProfile" />}
               align="end"
             >
-              <Dropdown.Item as={Link} to={routes.getProfileOrdersPageRoute()}>
+              <Dropdown.Item as={Link} to={routes.getProfileOrdersRoute()}>
                 Orders
               </Dropdown.Item>
-              <Dropdown.Item as={Link} to={routes.getProfileSettingsPageRoute()}>
+              <Dropdown.Item as={Link} to={routes.getProfileSettingsRoute()}>
                 Profile
               </Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item as={Link} to="/">
+              <Dropdown.Item as={Link} to={routes.getSignOutRoute()}>
                 Log Out
               </Dropdown.Item>
             </DropdownButton>

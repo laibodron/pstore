@@ -1,9 +1,9 @@
 import { createElement } from 'react'
 import { type IconBaseProps } from 'react-icons'
 import { AiOutlineInbox } from 'react-icons/ai'
-import { FaRegHeart, FaRegTrashCan, FaRegUser, FaTelegram } from 'react-icons/fa6'
+import { FaCheck,FaRegHeart, FaRegTrashCan, FaRegUser, FaTelegram } from 'react-icons/fa6'
 import { FiShoppingCart } from 'react-icons/fi'
-import { MdAdminPanelSettings,MdOutlineLocationOn } from 'react-icons/md'
+import { MdAdminPanelSettings, MdOutlineLocationOn } from 'react-icons/md'
 
 const icons = {
   userProfile: FaRegUser,
@@ -14,6 +14,7 @@ const icons = {
   trash: FaRegTrashCan,
   box: AiOutlineInbox,
   admin: MdAdminPanelSettings,
+  check: FaCheck,
 }
 
 export const Icon = ({ name, ...restProps }: { name: keyof typeof icons } & IconBaseProps) => {

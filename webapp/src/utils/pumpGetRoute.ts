@@ -20,7 +20,6 @@ function pumpGetRoute(getRoute: () => string): {
   useParams: () => {}
   definition: string
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function pumpGetRoute(routeParamsOrGetRoute?: any, maybeGetRoute?: any) {
   const routeParamsDefinition = typeof routeParamsOrGetRoute === 'function' ? {} : routeParamsOrGetRoute
   const getRoute = typeof routeParamsOrGetRoute === 'function' ? routeParamsOrGetRoute : maybeGetRoute

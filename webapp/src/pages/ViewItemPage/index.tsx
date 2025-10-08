@@ -1,27 +1,41 @@
 import { Button, Carousel, Col, Row, Spinner } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
+import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '../../components/Icon'
 import PageWithTitle from '../../components/PageWithTitle'
+import { withPageWrapper } from '../../lib/pageWrapper'
+import { getCartRoute, getViewItemRoute } from '../../lib/routes'
+import useCartStore from '../../lib/store/useCart'
 import { trpc } from '../../lib/trpc'
 
-const ViewItemPage = () => {
-  const { data, error, isLoading } = trpc.getProduct.useQuery({ productId: 'b4904cd5-6ce1-454f-8da8-5dd5727d1ba6' })
+const ViewItemPage = withPageWrapper({
+  useQuery: () => {
+    const { itemId } = getViewItemRoute.useParams()
+    return trpc.getProduct.useQuery({ productId: itemId })
+  },
+  setProps: ({ queryResult, ctx, checkExists }) => ({
+    product: checkExists(queryResult.data.product, 'Product not found'),
+    me: ctx.me,
+  }),
+  title: ({ product }) => product.title,
+})(({ product, me }) => {
+  const navigate = useNavigate()
+  const addToCart = useCartStore((state) => state.addItem)
+  const cartList = useCartStore((state) => state.items)
 
-  if (isLoading) {
-    return (
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
-    )
+  const isInCart = cartList.find((el) => el.id === product.id && el.quantity > 0)
+  const callbacks = {
+    onBuy: (id: string) => {
+      if (cartList.find((p) => p.id === id)?.quantity) {
+        navigate(getCartRoute())
+      } else {
+        addToCart(id)
+      }
+    },
   }
-
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
-
   return (
-    <PageWithTitle title={data?.product.title}>
+    <PageWithTitle title={product.title}>
       <Row>
         <Col md={6}>
           <Carousel data-bs-theme="dark" interval={null}>
@@ -43,16 +57,18 @@ const ViewItemPage = () => {
           </Carousel>
         </Col>
         <Col className="d-flex justify-content-end">
-          <div className="me-4 fs-3 h-auto">{data?.product.price}$</div>
+          <div className="me-4 fs-3 h-auto">{product.price}$</div>
           <div>
             <Icon name="heart" size={24} className="me-4" />
-            <Button variant="primary">Купить</Button>
+            <Button onClick={() => callbacks.onBuy(product.id)} variant="primary">
+              {isInCart ? <Icon name="check" size={18} /> : 'Buy'}
+            </Button>
           </div>
         </Col>
       </Row>
       <Row className="fs-6 mt-4">
         <h1 className="fs-4 mb-3">Description</h1>
-        {data?.product.description}
+        {product.description}
       </Row>
       <Row className="fs-6 mt-4">
         <h1 className="fs-4 mb-3">Specifications</h1>
@@ -66,6 +82,6 @@ const ViewItemPage = () => {
       </Row>
     </PageWithTitle>
   )
-}
+})
 
 export default ViewItemPage
