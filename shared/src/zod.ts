@@ -15,17 +15,22 @@ export const zStringRequired = z
     message: 'Please, fill it',
   })
 export const zStringOptional = z.string().optional()
-export const zEmailRequired = zStringRequired.email()
+export const zPhoneNumberRequired = zStringRequired.regex(/^\+?[0-9]{10,15}$/, 'Некорректный номер телефона')
+export const zEmailRequired = z.email()
 export const zNickRequired = zStringRequired.regex(
   /^[a-z0-9-]+$/,
   'Nick may contain only lowercase letters, numbers and dashes'
+)
+export const zNameRequired = zStringRequired.regex(
+  /^[a-zA-Zа-яА-ЯёЁіІїЇєЄ'`-]+$/,
+  'Name may contain only letters, apostrophes, backticks and dashes'
 )
 export const zStringMin = (min: number) => zStringRequired.min(min, `Text should be at least ${min} characters long`)
 export const zPasswordsMustBeTheSame =
   (passwordFieldName: string, passwordAgainFieldName: string) => (val: any, ctx: z.RefinementCtx) => {
     if (val[passwordFieldName] !== val[passwordAgainFieldName]) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Passwords must be the same',
         path: [passwordAgainFieldName],
       })

@@ -3,12 +3,11 @@ import './styles/global.scss'
 import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import ChangePasswordModal from './components/ChangePasswordModal'
 import Layout from './components/Layout'
-import LogInModal from './components/LogInModal'
+import ModalRoot from './components/ModalRoot'
 import { NotAuthRouteTracker } from './components/NotAuthRouteTracker'
 import ProfileLayout from './components/ProfileLayout'
-import SignInModal from './components/SignInModal'
+import { AppContextProvider } from './lib/ctx'
 import * as routes from './lib/routes'
 import { TrpcProvider } from './lib/trpc'
 import AdminPanel from './pages/AdminPanel'
@@ -26,28 +25,28 @@ function App() {
   return (
     <HelmetProvider>
       <TrpcProvider>
-        <BrowserRouter>
-          <LogInModal />
-          <SignInModal />
-          <ChangePasswordModal />
-          <NotAuthRouteTracker />
-          <Routes>
-            <Route path={routes.getSignOutRoute.definition} element={<SignOutPage />} />
-            <Route element={<Layout />}>
-              <Route path={routes.getMainRoute.definition} element={<MainPage />} />
-              <Route path={routes.getCatalogRoute.definition} element={<CatalogPage />} />
-              <Route path={routes.getViewItemRoute.definition} element={<ViewItemPage />} />
-              <Route path={routes.getWishlistRoute.definition} element={<WishlistPage />} />
-              <Route path={routes.getCartRoute.definition} element={<CartPage />} />
-              <Route element={<ProfileLayout />}>
-                <Route path={routes.getProfileOrdersRoute.definition} element={<ProfileOrdersPage />} />
-                <Route path={routes.getProfileSettingsRoute.definition} element={<ProfileSettingsPage />} />
-                <Route path={routes.getAdminPanelRoute.definition} element={<AdminPanel />} />
+        <AppContextProvider>
+          <BrowserRouter>
+            <ModalRoot />
+            <NotAuthRouteTracker />
+            <Routes>
+              <Route path={routes.getSignOutRoute.definition} element={<SignOutPage />} />
+              <Route element={<Layout />}>
+                <Route path={routes.getMainRoute.definition} element={<MainPage />} />
+                <Route path={routes.getCatalogRoute.definition} element={<CatalogPage />} />
+                <Route path={routes.getViewItemRoute.definition} element={<ViewItemPage />} />
+                <Route path={routes.getWishlistRoute.definition} element={<WishlistPage />} />
+                <Route path={routes.getCartRoute.definition} element={<CartPage />} />
+                <Route element={<ProfileLayout />}>
+                  <Route path={routes.getProfileOrdersRoute.definition} element={<ProfileOrdersPage />} />
+                  <Route path={routes.getProfileSettingsRoute.definition} element={<ProfileSettingsPage />} />
+                  <Route path={routes.getAdminPanelRoute.definition} element={<AdminPanel />} />
+                </Route>
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+        </AppContextProvider>
       </TrpcProvider>
     </HelmetProvider>
   )

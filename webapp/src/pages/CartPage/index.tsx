@@ -15,9 +15,9 @@ const CartPage = withPageWrapper({
       ids: items.map((i) => i.id),
     })
   },
-  setProps: ({ queryResult, ctx, checkExists }) => ({
-    products: checkExists(queryResult.data.productsById, 'Products By Id not found'),
-    count: checkExists(queryResult.data.count, 'Counts not found'),
+  setProps: ({ queryResult, ctx }) => ({
+    products: queryResult.data.productsById,
+    count: queryResult.data.count,
     me: ctx.me,
   }),
   title: 'Cart',
@@ -72,7 +72,9 @@ const CartPage = withPageWrapper({
               </Col>
             </Row>
           </Card>
-          <Button onClick={callbacks.onClear} variant="danger" className="mb-3">Clear</Button>
+          <Button onClick={callbacks.onClear} variant="danger" className="mb-3">
+            Clear
+          </Button>
         </Col>
       </Row>
     </PageWithTitle>

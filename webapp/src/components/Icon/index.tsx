@@ -1,13 +1,14 @@
 import { createElement } from 'react'
 import { type IconBaseProps } from 'react-icons'
 import { AiOutlineInbox } from 'react-icons/ai'
-import { FaCheck,FaRegHeart, FaRegTrashCan, FaRegUser, FaTelegram } from 'react-icons/fa6'
+import { FaCheck, FaHeart, FaRegHeart, FaRegTrashCan, FaRegUser, FaTelegram } from 'react-icons/fa6'
 import { FiShoppingCart } from 'react-icons/fi'
 import { MdAdminPanelSettings, MdOutlineLocationOn } from 'react-icons/md'
 
 const icons = {
   userProfile: FaRegUser,
   heart: FaRegHeart,
+  dashedHeart: FaHeart,
   cart: FiShoppingCart,
   telegram: FaTelegram,
   location: MdOutlineLocationOn,

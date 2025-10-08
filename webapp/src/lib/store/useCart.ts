@@ -8,7 +8,7 @@ type CartState = {
 }
 
 const useCartStore = create<CartState>((set) => ({
-  items: [{ id: 'b4904cd5-6ce1-454f-8da8-5dd5727d1ba6', quantity: 1 }],
+  items: [],
   addItem: (id: string, quantity: number = 1) =>
     set((state) => {
       const existingItem = state.items.find((item) => item.id === id)

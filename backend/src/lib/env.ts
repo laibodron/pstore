@@ -48,6 +48,8 @@ const zEnv = z.object({
       (val) => process.env.HOST_ENV === 'local' || process.env.NODE_ENV !== 'production' || (!!val && val.length > 0),
       'Required on not local host on production'
     ),
+  JWT_SECRET: zEnvNonemptyTrimmed,
+  PASSWORD_SALT: zEnvNonemptyTrimmed,
 })
 
 export const env = zEnv.parse(process.env)

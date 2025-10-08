@@ -1,10 +1,14 @@
 import { Container, Dropdown, DropdownButton, Form, Nav, Navbar } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
+import { useMe } from '../../lib/ctx'
 import * as routes from '../../lib/routes'
+import { useModalStore } from '../../lib/store/useModal'
 import { Icon } from '../Icon'
 
 const Header = () => {
+  const me = useMe()
+  const { openLogin, openSignUp } = useModalStore()
   return (
     <>
       <Navbar bg="secondary" variant="dark" expand="lg" className="py-2 text-light">
@@ -75,16 +79,25 @@ const Header = () => {
               title={<Icon size={28} name="userProfile" />}
               align="end"
             >
-              <Dropdown.Item as={Link} to={routes.getProfileOrdersRoute()}>
-                Orders
-              </Dropdown.Item>
-              <Dropdown.Item as={Link} to={routes.getProfileSettingsRoute()}>
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item as={Link} to={routes.getSignOutRoute()}>
-                Log Out
-              </Dropdown.Item>
+              {me ? (
+                <>
+                  <Dropdown.Item as={Link} to={routes.getProfileOrdersRoute()}>
+                    Orders
+                  </Dropdown.Item>
+                  <Dropdown.Item as={Link} to={routes.getProfileSettingsRoute()}>
+                    Profile
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item as={Link} to={routes.getSignOutRoute()}>
+                    Sign Out
+                  </Dropdown.Item>
+                </>
+              ) : (
+                <>
+                  <Dropdown.Item onClick={() => openLogin()}>Log In</Dropdown.Item>
+                  <Dropdown.Item onClick={() => openSignUp()}>Sign Up</Dropdown.Item>
+                </>
+              )}
             </DropdownButton>
           </div>
         </Container>

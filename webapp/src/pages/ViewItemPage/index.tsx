@@ -7,6 +7,7 @@ import PageWithTitle from '../../components/PageWithTitle'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
 import useCartStore from '../../lib/store/useCart'
+import useWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
 
 const ViewItemPage = withPageWrapper({
@@ -23,7 +24,10 @@ const ViewItemPage = withPageWrapper({
   const navigate = useNavigate()
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
+  const addToWishlist = useWishlistState((state) => state.addItem)
+  const wishlist = useWishlistState((state) => state.items)
 
+  const isInWishlist = !!wishlist.find((el) => el.id === product.id)
   const isInCart = cartList.find((el) => el.id === product.id && el.quantity > 0)
   const callbacks = {
     onBuy: (id: string) => {
@@ -59,7 +63,14 @@ const ViewItemPage = withPageWrapper({
         <Col className="d-flex justify-content-end">
           <div className="me-4 fs-3 h-auto">{product.price}$</div>
           <div>
-            <Icon name="heart" size={24} className="me-4" />
+            <Icon
+              onClick={() => addToWishlist(product.id)}
+              name={isInWishlist ? 'dashedHeart' : 'heart'}
+              size={24}
+              className="me-4"
+              style={{ cursor: 'pointer' }}
+            />
+            {/* <Icon name="heart" size={24} className="me-4" /> */}
             <Button onClick={() => callbacks.onBuy(product.id)} variant="primary">
               {isInCart ? <Icon name="check" size={18} /> : 'Buy'}
             </Button>

@@ -30,12 +30,12 @@ export default defineConfig([
           }]
         }
       ],
-      "no-console": [
-        "error",
-        {
-          allow: ["info", "error", "warn"]
-        }
-      ],
+      // "no-console": [
+      //   "error",
+      //   {
+      //     allow: ["info", "error", "warn"]
+      //   }
+      // ],
     }
   },
   {

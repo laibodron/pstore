@@ -5,6 +5,7 @@ import express from 'express'
 
 import { AppContext, createAppContext } from './lib/ctx'
 import { logger } from './lib/logger'
+import { applyPassportToExpressApp } from './lib/passport'
 import { applyTrpcToExpressApp } from './lib/trpc'
 import { trpcRouter } from './router'
 
@@ -20,6 +21,7 @@ void (async () => {
       res.send('pong')
     })
 
+    applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
 
     expressApp.use((error: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {

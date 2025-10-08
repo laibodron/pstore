@@ -2,20 +2,25 @@ import type { TrpcRouterOutput } from '@pstore/backend/src/router'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
+import { getViewItemRoute } from '../../lib/routes'
 import { Icon } from '../Icon'
 
-type productType = Pick<TrpcRouterOutput['getProduct']['product'], 'id' | 'title' | 'price' | 'description'> & {
+type productType = Pick<TrpcRouterOutput['getProduct']['product'], 'id' | 'title' | 'price'> & {
+  description?: string | null
   countInCart?: number
+  isInWishlist?: boolean
 }
 
 const HorizontalCard = ({
   product,
-  link,
+  link = getViewItemRoute({ itemId: product.id }),
   onBuy = () => ({}),
+  onAddToWishlist = () => ({}),
 }: {
   product: productType
-  link: string
+  link?: string
   onBuy?: () => void
+  onAddToWishlist: () => void
 }) => {
   return (
     <Card className="mb-3">
@@ -44,7 +49,13 @@ const HorizontalCard = ({
               </div>
               {/* className="d-flex h-100 align-items-center align-items-end" */}
               <div>
-                <Icon name="heart" size={24} className="me-4" />
+                <Icon
+                  onClick={onAddToWishlist}
+                  name={product.isInWishlist ? 'dashedHeart' : 'heart'}
+                  size={24}
+                  className="me-4"
+                  style={{ cursor: 'pointer' }}
+                />
 
                 <Button onClick={onBuy} variant={product.countInCart ? 'outline-primary' : 'primary'}>
                   {!product.countInCart ? 'Buy' : <Icon name="check" size={18} />}

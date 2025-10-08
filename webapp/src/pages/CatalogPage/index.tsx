@@ -6,34 +6,41 @@ import PageWithTitle from '../../components/PageWithTitle'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
 import useCartStore from '../../lib/store/useCart'
+import useWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
 
 const CatalogPage = withPageWrapper({
   useQuery: () => trpc.getProducts.useQuery(),
-  setProps: ({ queryResult, ctx, checkExists }) => ({
-    products: checkExists(queryResult.data.products, 'Products not found'),
-    countProd: checkExists(queryResult.data.count, 'Count not found'),
+  setProps: ({ queryResult, ctx }) => ({
+    products: queryResult.data.products,
+    countProd: queryResult.data.count,
     me: ctx.me,
   }),
 
   title: 'Catalog',
 })(({ products, countProd, me }) => {
   const navigate = useNavigate()
+  const addToWishlist = useWishlistState((state) => state.addItem)
+  const wishlist = useWishlistState((state) => state.items)
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
-  const productsWithCart = products.map((product) => ({
+  const productsWithCartAndWishlist = products.map((product) => ({
     ...product,
     countInCart: cartList.find((i) => i.id === product.id)?.quantity || 0,
+    isInWishlist: !!wishlist.find((el) => product.id === el.id),
   }))
 
   const callbacks = {
     onBuy: (id: string) => {
-      if (productsWithCart.find((p) => p.id === id)?.countInCart) {
+      if (productsWithCartAndWishlist.find((p) => p.id === id)?.countInCart) {
         navigate(getCartRoute())
       } else {
         addToCart(id)
       }
-    }
+    },
+    onAddToWishlist: (id: string) => {
+      addToWishlist(id)
+    },
   }
   return (
     <PageWithTitle title="Catalog" subtitle={`${countProd} products`}>
@@ -67,9 +74,9 @@ const CatalogPage = withPageWrapper({
               <Accordion.Body>
                 <Form>
                   <Form.Control aria-label="Dollar" className="mb-4" />
-                  <Form.Check type="checkbox" id="checkbox-1" label="Simple checkbox 1" />
-                  <Form.Check type="checkbox" id="checkbox-2" label="Simple checkbox 2" />
-                  <Form.Check type="checkbox" id="checkbox-3" label="Simple checkbox 3" />
+                  <Form.Check type="checkbox" id="checkbox-11" label="Simple checkbox 1" />
+                  <Form.Check type="checkbox" id="checkbox-22" label="Simple checkbox 2" />
+                  <Form.Check type="checkbox" id="checkbox-33" label="Simple checkbox 3" />
                 </Form>
               </Accordion.Body>
             </Accordion.Item>
@@ -86,10 +93,10 @@ const CatalogPage = withPageWrapper({
                 <option value="2">Two</option>
                 <option value="3">Three</option>
               </Form.Select>
-              {productsWithCart.map((product) => (
+              {productsWithCartAndWishlist.map((product) => (
                 <HorizontalCard
+                  onAddToWishlist={() => callbacks.onAddToWishlist(product.id)}
                   onBuy={() => callbacks.onBuy(product.id)}
-                  link={getViewItemRoute({ itemId: product.id })}
                   key={product.id}
                   product={product}
                 />

@@ -82,12 +82,13 @@ export default [
           skipStrings: true
         }
       ],
-      "no-console": [
-        "error",
-        {
-          allow: ["info", "error", "warn"]
-        }
-      ],
+      "no-console": 
+      // [
+        "warn",
+      //   {
+      //     allow: ["info", "error", "warn"]
+      //   }
+      // ],
       "no-irregular-whitespace": "off" // без этого куча ошибок
     },
     settings: {

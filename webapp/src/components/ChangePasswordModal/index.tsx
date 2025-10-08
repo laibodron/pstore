@@ -1,14 +1,9 @@
 import { useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap'
 
-const ChangePasswordModal = () => {
-  const [show, setShow] = useState(false)
-
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
-
+const ChangePasswordModal = ({ open, close }: { open: boolean; close: () => void }) => {
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={open} onHide={close}>
       <Modal.Header closeButton>
         <Modal.Title>Change password</Modal.Title>
       </Modal.Header>
@@ -26,7 +21,7 @@ const ChangePasswordModal = () => {
             <Form.Label>New password again</Form.Label>
             <Form.Control type="password" />
           </Form.Group>
-          <Button variant="danger" onClick={handleClose} className="w-100">
+          <Button variant="danger" onClick={() => ({})} className="w-100">
             Confirm
           </Button>
         </Form>
