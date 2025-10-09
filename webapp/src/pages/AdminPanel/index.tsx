@@ -7,7 +7,7 @@ import { trpc } from '../../lib/trpc'
 
 const AdminPanel = withPageWrapper({
   title: 'Admin Panel',
-  // authorizedOnly: true,
+  authorizedOnly: true,
 })(() => {
   const createProduct = trpc.createProduct.useMutation()
 

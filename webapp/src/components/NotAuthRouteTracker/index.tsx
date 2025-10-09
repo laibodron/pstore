@@ -15,7 +15,7 @@ export const NotAuthRouteTracker = () => {
     if (!isAuthRoute) {
       changeLast(pathname || getMainRoute())
     }
-  }, [pathname, changeLast])
+  }, [pathname])
 
   return null
 }

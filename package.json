@@ -10,6 +10,7 @@
     "prettify": "pnpm -r --parallel prettify",
     "types": "concurrently 'pnpm b types' 'pnpm w types' 'pnpm sh types'",
     "lint": "concurrently 'pnpm b lint' 'pnpm w lint' 'pnpm sh lint'",
+    "tl": "pnpm types && pnpm lint",
     "prepare": "husky"
   },
   "dependencies": {

@@ -9,8 +9,11 @@ import { getNRandomProductsTrpcRoute } from './getNRandomProducts'
 import { getProductTrpcRoute } from './getProduct'
 import { getProductsTrpcRoute } from './getProducts'
 import { getProductsByIdTrpcRoute } from './getProductsById'
+import { prepareCloudinaryUploadTrpcRoute } from './prepareCloudinaryUpload'
 import { signInTrpcRoute } from './signIn'
 import { signUpTrpcRoute } from './signUp'
+import { updatePasswordTrpcRoute } from './updatePassword'
+import { updateProfileTrpcRoute } from './updateProfile'
 // @endindex
 
 export const trpcRouter = createTrpcRouter({
@@ -21,8 +24,11 @@ export const trpcRouter = createTrpcRouter({
   getProduct: getProductTrpcRoute,
   getProducts: getProductsTrpcRoute,
   getProductsById: getProductsByIdTrpcRoute,
+  prepareCloudinaryUpload: prepareCloudinaryUploadTrpcRoute,
   signIn: signInTrpcRoute,
   signUp: signUpTrpcRoute,
+  updatePassword: updatePasswordTrpcRoute,
+  updateProfile: updateProfileTrpcRoute,
   // @endindex
 })
 

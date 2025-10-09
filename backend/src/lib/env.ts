@@ -18,13 +18,13 @@ const findEnvFilePath = (dir: string, pathPart: string): string | null => {
 }
 const webappEnvFilePath = findEnvFilePath(__dirname, 'webapp/.env')
 if (webappEnvFilePath) {
-  dotenv.config({ path: webappEnvFilePath, override: true })
-  dotenv.config({ path: `${webappEnvFilePath}.${process.env.NODE_ENV}`, override: true })
+  dotenv.config({ path: webappEnvFilePath, override: true, quiet: true })
+  dotenv.config({ path: `${webappEnvFilePath}.${process.env.NODE_ENV}`, override: true, quiet: true })
 }
 const backendEnvFilePath = findEnvFilePath(__dirname, 'backend/.env')
 if (backendEnvFilePath) {
-  dotenv.config({ path: backendEnvFilePath, override: true })
-  dotenv.config({ path: `${backendEnvFilePath}.${process.env.NODE_ENV}`, override: true })
+  dotenv.config({ path: backendEnvFilePath, override: true, quiet: true })
+  dotenv.config({ path: `${backendEnvFilePath}.${process.env.NODE_ENV}`, override: true, quiet: true })
 }
 
 const zEnv = z.object({
@@ -50,6 +50,9 @@ const zEnv = z.object({
     ),
   JWT_SECRET: zEnvNonemptyTrimmed,
   PASSWORD_SALT: zEnvNonemptyTrimmed,
+  CLOUDINARY_API_KEY: zEnvNonemptyTrimmedRequiredOnNotLocal,
+  CLOUDINARY_API_SECRET: zEnvNonemptyTrimmedRequiredOnNotLocal,
+  CLOUDINARY_CLOUD_NAME: zEnvNonemptyTrimmed,
 })
 
 export const env = zEnv.parse(process.env)

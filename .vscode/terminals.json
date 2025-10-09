@@ -1,0 +1,18 @@
+{
+  "autorun": true,
+  "autokill": false,
+  "terminals": [
+    {
+      "name": "Backend",
+      "open": true,
+      "focus": false,
+      "commands": ["cd backend", "pnpm dev"]
+    },
+    {
+      "name": "Frontend",
+      "open": true,
+      "focus": false,
+      "commands": ["cd webapp", "pnpm dev"]
+    }
+  ]
+}

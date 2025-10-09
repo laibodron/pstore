@@ -13,10 +13,10 @@ export const ErrorPageComponent = ({
     <Card className="text-center">
       <Card.Body>
         <Card.Title>{title}</Card.Title>
-        <Card.Text>
+        <Card.Body>
           <Alert variant="danger">{message}</Alert>
           {children}
-        </Card.Text>
+        </Card.Body>
       </Card.Body>
     </Card>
   )

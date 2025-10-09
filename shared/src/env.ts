@@ -1,7 +1,8 @@
+// declare const process: { env?: Record<string, string | undefined> } | undefined
 /* eslint-disable n/no-process-env */
 import { z } from 'zod'
 
-const zEnvNonemptyTrimmed = z.string().trim().min(1)
+import { zEnvNonemptyTrimmed } from './zod'
 
 declare global {
   // Глобальная переменная, которую может прокинуть backend в HTML при рендере
@@ -22,10 +23,12 @@ const getSharedEnvVariable = (key: string): string | undefined => {
 
 const sharedEnvRaw = {
   WEBAPP_URL: getSharedEnvVariable('WEBAPP_URL'),
+  CLOUDINARY_CLOUD_NAME: getSharedEnvVariable('CLOUDINARY_CLOUD_NAME'),
 }
 
 const zEnv = z.object({
   WEBAPP_URL: zEnvNonemptyTrimmed,
+  CLOUDINARY_CLOUD_NAME: zEnvNonemptyTrimmed,
 })
 
 export const sharedEnv = zEnv.parse(sharedEnvRaw)
