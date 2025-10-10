@@ -1,6 +1,7 @@
 import { zCreateProductInput } from '@pstore/backend/src/router/createProduct/input'
 import { Alert, Button, Form } from 'react-bootstrap'
 
+import { UploadsToCloudinary } from '../../components/UploadsToCloudinary'
 import { useForm } from '../../lib/form'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { trpc } from '../../lib/trpc'
@@ -17,6 +18,7 @@ const AdminPanel = withPageWrapper({
       title: '',
       price: '',
       description: '',
+      images: [],
     },
     validationSchema: zCreateProductInput,
     onSubmit: async (values) => {
@@ -71,6 +73,12 @@ const AdminPanel = withPageWrapper({
           isInvalid={formik.touched.price && !!formik.errors.price}
         />
         <Form.Control.Feedback type="invalid">{formik.errors.price}</Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Images</Form.Label>
+        <UploadsToCloudinary label="" name="images" formik={formik} type="image" preset="preview" />
+        <Form.Control.Feedback type="invalid"></Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-3">

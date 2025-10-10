@@ -29,7 +29,6 @@ const CatalogPage = withPageWrapper({
     countInCart: cartList.find((i) => i.id === product.id)?.quantity || 0,
     isInWishlist: !!wishlist.find((el) => product.id === el.id),
   }))
-
   const callbacks = {
     onBuy: (id: string) => {
       if (productsWithCartAndWishlist.find((p) => p.id === id)?.countInCart) {

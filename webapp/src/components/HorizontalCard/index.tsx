@@ -9,6 +9,7 @@ type productType = Pick<TrpcRouterOutput['getProduct']['product'], 'id' | 'title
   description?: string | null
   countInCart?: number
   isInWishlist?: boolean
+  images?: string[]
 }
 
 const HorizontalCard = ({
@@ -28,7 +29,7 @@ const HorizontalCard = ({
         {/* Фото слева */}
         <Col as={Link} to={link} md={3}>
           <Card.Img
-            src="https://vkplay.ru/hotbox/content_files/UgcStories/2025/04/28/b308f6f54026482a87807c7708d06eaf.png"
+            src={product.images && product.images[0]}
             alt="product"
             className="img-fluid rounded-start d-flex"
             // onClick={() => console.info('click')}

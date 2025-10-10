@@ -10,4 +10,5 @@ export const zCreateProductInput = z.object({
     .regex(/^\d*[.,]?\d*$/, 'Цена должна содержать только цифры, точку или запятую')
     .refine((val) => val === '' || Number(val.replace(',', '.')) >= 0, 'Цена не может быть отрицательной'),
   description: zStringOptional,
+  images: z.array(z.string()),
 })

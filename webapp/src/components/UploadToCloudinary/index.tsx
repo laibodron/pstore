@@ -6,7 +6,7 @@ import {
 import { type FormikProps } from 'formik'
 import memoize from 'lodash/memoize'
 import { useCallback, useRef, useState } from 'react'
-import { Button, ButtonGroup } from 'react-bootstrap'
+import { Button, ButtonGroup, Dropdown, NavItem, NavLink, Spinner } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
 
 import { trpc } from '../../lib/trpc'
@@ -84,7 +84,7 @@ export const UploadToCloudinary = <TTypeName extends CloudinaryUploadTypeName>({
   const [loading, setLoading] = useState(false)
 
   const { uploadToCloudinary } = useUploadToCloudinary(type)
-
+  console.log(getCloudinaryUploadUrl(value, type, preset))
   return (
     <div
     // className={cn({ [css.field]: true, [css.disabled]: disabled })}
@@ -124,23 +124,63 @@ export const UploadToCloudinary = <TTypeName extends CloudinaryUploadTypeName>({
       >
         {label}
       </label>
-      {!!value && !loading && (
-        <div
-        // className={css.previewPlace}
-        >
-          <Image
-            fluid
-            src={getCloudinaryUploadUrl(value, type, preset)}
-            roundedCircle
-            width={156}
-            // height={54}
-          />
-        </div>
-      )}
+      <div
+      // className={css.previewPlace}
+      >
+        <Dropdown id={name} className="w-100 h-100">
+          <Dropdown.Toggle as="div" id="" className="w-100 h-100" style={{ cursor: 'pointer' }}>
+            <div className="w-100 h-100" style={{ width: 156, height: 156 }}>
+              {(!!value && !loading && (
+                <Image
+                  fluid
+                  src={
+                    getCloudinaryUploadUrl(value, type, preset) ||
+                    'https://images.steamusercontent.com/ugc/34445928214906822/BCFFD0DB0C56F71CD288304540E39FC2FADFD155/?imw=512&amp;imh=341&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true'
+                  }
+                  alt="zxc"
+                  roundedCircle
+                  width={156}
+                  height={156}
+                />
+              )) ||
+                (loading && <Spinner animation="border" role="status" />)}
+            </div>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={loading || disabled}
+                onClick={() => inputEl.current?.click()}
+              >
+                {value ? 'Upload another' : 'Upload'}
+              </Button>
+            </Dropdown.Item>
+            {!!value && !loading && (
+              <Dropdown.Item>
+                <Button
+                  type="button"
+                  variant="danger"
+                  onClick={() => {
+                    void formik.setFieldValue(name, null)
+                    formik.setFieldError(name, undefined)
+                    void formik.setFieldTouched(name)
+                  }}
+                  disabled={disabled}
+                >
+                  Удалить
+                </Button>
+              </Dropdown.Item>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+
       <div
       // className={css.buttons}
       >
-        <ButtonGroup>
+        {/* <ButtonGroup>
           <Button
             type="button"
             onClick={() => inputEl.current?.click()}
@@ -153,7 +193,7 @@ export const UploadToCloudinary = <TTypeName extends CloudinaryUploadTypeName>({
           {!!value && !loading && (
             <Button
               type="button"
-              color="red"
+              variant="danger"
               onClick={() => {
                 void formik.setFieldValue(name, null)
                 formik.setFieldError(name, undefined)
@@ -164,7 +204,7 @@ export const UploadToCloudinary = <TTypeName extends CloudinaryUploadTypeName>({
               Remove
             </Button>
           )}
-        </ButtonGroup>
+        </ButtonGroup> */}
       </div>
       {invalid && (
         <div

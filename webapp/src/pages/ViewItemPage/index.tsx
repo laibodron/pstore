@@ -1,3 +1,5 @@
+import { getCloudinaryUploadUrl } from '@pstore/shared/src/cloudinary'
+import { useEffect } from 'react'
 import { Button, Carousel, Col, Row, Spinner } from 'react-bootstrap'
 import Image from 'react-bootstrap/Image'
 import { useNavigate } from 'react-router-dom'
@@ -38,26 +40,17 @@ const ViewItemPage = withPageWrapper({
       }
     },
   }
+
   return (
     <PageWithTitle title={product.title}>
       <Row>
         <Col md={6}>
           <Carousel data-bs-theme="dark" interval={null}>
-            <Carousel.Item>
-              <Image
-                fluid
-                src="https://vkplay.ru/hotbox/content_files/UgcStories/2025/04/28/b308f6f54026482a87807c7708d06eaf.png"
-              />
-            </Carousel.Item>
-            <Carousel.Item>
-              <Image fluid src="https://www.liceyszr.minobr63.ru/wp-content/uploads/2020/04/s1200.jpg" />
-            </Carousel.Item>
-            <Carousel.Item>
-              <Image
-                fluid
-                src="https://static.tildacdn.com/tild6663-3838-4365-a135-626231613431/1614577810_4-p-foto-.png"
-              />
-            </Carousel.Item>
+            {product.images.map((image) => (
+              <Carousel.Item key={image}>
+                <Image fluid src={image} />
+              </Carousel.Item>
+            ))}
           </Carousel>
         </Col>
         <Col className="d-flex justify-content-end">

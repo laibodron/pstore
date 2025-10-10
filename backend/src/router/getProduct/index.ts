@@ -1,3 +1,5 @@
+import { getCloudinaryUploadUrl } from '@pstore/shared/src/cloudinary'
+
 import { ExpectedError } from '../../lib/error'
 import { trpcLoggedProcedure } from '../../lib/trpc'
 
@@ -12,6 +14,12 @@ export const getProductTrpcRoute = trpcLoggedProcedure.input(zGetProductInput).q
 
   if (!product) {
     throw new ExpectedError('Product not found')
+  }
+
+  if (product.images.length) {
+    product.images = product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'large'))
+  } else {
+    product.images = ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
   }
 
   return { product }

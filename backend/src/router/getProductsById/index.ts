@@ -20,6 +20,7 @@ export const getProductsByIdTrpcRoute = trpcLoggedProcedure
       id: product.id,
       title: product.title,
       price: product.price,
+      image: product.images.length ? product.images[0] : '',
     }))
 
     return { productsById: pickedProductsById, count }

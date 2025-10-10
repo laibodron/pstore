@@ -23,10 +23,7 @@ const MainPage = withPageWrapper({
       <div className="d-flex justify-content-around mt-4">
         {products.map((product) => (
           <Card as={Link} to={getViewItemRoute({ itemId: product.id })} key={product.id} style={{ width: '18rem' }}>
-            <Card.Img
-              variant="top"
-              src="https://vkplay.ru/hotbox/content_files/UgcStories/2025/04/28/b308f6f54026482a87807c7708d06eaf.png"
-            />
+            <Card.Img variant="top" src={product.images[0]} />
             <Card.Body>
               <Card.Title>{product.title}</Card.Title>
               <Card.Text className="d-flex justify-content-between align-items-center fs-5 mt-4">
