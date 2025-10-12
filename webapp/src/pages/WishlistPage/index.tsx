@@ -10,7 +10,7 @@ import { trpc } from '../../lib/trpc'
 
 const WishlistPage = withPageWrapper({
   useQuery: () => {
-    const items = useWishlistState((state) => state.items)
+    const items: { id: string }[] = useWishlistState((state) => state.items)
     return trpc.getProductsById.useQuery({
       ids: items.map((i) => i.id),
     })
@@ -26,7 +26,7 @@ const WishlistPage = withPageWrapper({
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
   const addToWishlist = useWishlistState((state) => state.addItem)
-  const wishlist = useWishlistState((state) => state.items)
+  const wishlist: { id: string }[] = useWishlistState((state) => state.items)
   const productsWithCartAndWishlist = products.map((product) => ({
     ...product,
     countInCart: cartList.find((i) => i.id === product.id)?.quantity || 0,

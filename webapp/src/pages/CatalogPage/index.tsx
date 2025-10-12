@@ -21,7 +21,7 @@ const CatalogPage = withPageWrapper({
 })(({ products, countProd, me }) => {
   const navigate = useNavigate()
   const addToWishlist = useWishlistState((state) => state.addItem)
-  const wishlist = useWishlistState((state) => state.items)
+  const wishlist: { id: string }[] = useWishlistState((state) => state.items)
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
   const productsWithCartAndWishlist = products.map((product) => ({

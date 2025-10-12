@@ -27,7 +27,7 @@ const ViewItemPage = withPageWrapper({
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
   const addToWishlist = useWishlistState((state) => state.addItem)
-  const wishlist = useWishlistState((state) => state.items)
+  const wishlist: { id: string }[] = useWishlistState((state) => state.items)
 
   const isInWishlist = !!wishlist.find((el) => el.id === product.id)
   const isInCart = cartList.find((el) => el.id === product.id && el.quantity > 0)

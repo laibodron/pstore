@@ -14,11 +14,12 @@ model User {
   phoneNumber String            @unique
   username    String            @unique
   password    String
-  name        String?           
-  surname     String?           
-  avatarUrl   String?           
+  name        String?
+  surname     String?
+  avatarUrl   String?
   createdAt   DateTime          @default(now())
   wishlist    ProductFavorite[]
+  productCart ProductCart[]
 }
 
 model Product {
@@ -30,6 +31,7 @@ model Product {
   description     String?
   images          String[]          @default([])
   productFavorite ProductFavorite[]
+  productCart     ProductCart[]
 }
 
 model ProductFavorite {
@@ -39,6 +41,18 @@ model ProductFavorite {
   product   Product  @relation(fields: [productId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model ProductCart {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  count     Int
 
   @@unique([userId, productId])
 }
