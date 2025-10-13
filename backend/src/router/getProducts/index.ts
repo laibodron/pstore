@@ -19,11 +19,9 @@ export const getProductsTrpcRoute = trpcLoggedProcedure
     })
 
     const products = productsRaw.map((product) => {
-      if (product.images.length) {
-        product.images = product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'preview'))
-      } else {
-        product.images = ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
-      }
+      product.images = product.images.length
+        ? product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'preview'))
+        : ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
       return { ...omit(product, ['productFavorite']), isFavoriteByMe: product.productFavorite.length > 0 }
     })
 
