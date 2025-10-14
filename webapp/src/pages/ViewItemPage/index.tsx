@@ -8,50 +8,24 @@ import PageWithTitle from '../../components/PageWithTitle'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
 import useCartStore from '../../lib/store/useCart'
-import useWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
+import { useProductFavorite } from '../../lib/useProductFavorite'
 
-const FavoriteButton = ({
-  product,
-  isFetching,
-}: {
-  product: NonNullable<TrpcRouterOutput['getProduct']['product']>
-  isFetching: boolean
-}) => {
-  const trpcUtils = trpc.useUtils()
-  const setProductFavorite = trpc.setItemFavorite.useMutation({
-    onMutate: ({ isFavoriteByMe }) => {
-      const oldGetProductData = trpcUtils.getProduct.getData({ productId: product.id })
-      if (oldGetProductData?.product) {
-        const newGetProductData = {
-          ...oldGetProductData,
-          product: {
-            ...oldGetProductData.product,
-            isFavoriteByMe,
-          },
-        }
-        trpcUtils.getProduct.setData({ productId: product.id }, newGetProductData)
-      }
-    },
-    onSuccess: () => {
-      void trpcUtils.getProduct.invalidate({ productId: product.id })
-    },
-  })
+const FavoriteButton = ({ product }: { product: NonNullable<TrpcRouterOutput['getProduct']['product']> }) => {
+  const { toggleFavorite, isPending } = useProductFavorite({ productId: product.id })
   return (
     <>
-      {setProductFavorite.isPending ? (
+      {isPending ? (
         <Spinner animation="border" className="me-4" />
       ) : (
         <Icon
           onClick={() => {
-            setProductFavorite
-              .mutateAsync({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe })
-              .then(({ product: { isFavoriteByMe } }) => {
-                if (isFavoriteByMe) {
-                  //log it to mixpanel
-                  console.log('z')
-                }
-              })
+            console.log('Heart click')
+            toggleFavorite(!product.isFavoriteByMe).then(() => {
+              if (!product.isFavoriteByMe) {
+                // log it to mixpanel
+              }
+            })
           }}
           name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
           size={24}
@@ -71,18 +45,14 @@ const ViewItemPage = withPageWrapper({
   setProps: ({ queryResult, ctx, checkExists }) => ({
     product: checkExists(queryResult.data.product, 'Product not found'),
     me: ctx.me,
-    isFetching: queryResult.isFetching,
   }),
   showLoaderOnFetching: false,
   title: ({ product }) => product.title,
-})(({ product, isFetching, me }) => {
+})(({ product, me }) => {
   const navigate = useNavigate()
   const addToCart = useCartStore((state) => state.addItem)
   const cartList = useCartStore((state) => state.items)
-  const addToWishlist = useWishlistState((state) => state.addItem)
-  // const wishlist: { id: string }[] = useWishlistState((state) => state.items)
 
-  const isInWishlist = 1 //!!wishlist.find((el) => el.id === product.id)
   const isInCart = cartList.find((el) => el.id === product.id && el.quantity > 0)
   const callbacks = {
     onBuy: (id: string) => {
@@ -109,7 +79,7 @@ const ViewItemPage = withPageWrapper({
         <Col className="d-flex justify-content-end">
           <div className="me-4 fs-3 h-auto">{product.price}$</div>
           <div>
-            <FavoriteButton isFetching={isFetching} product={product} />
+            <FavoriteButton product={product} />
             {/* <Icon name="heart" size={24} className="me-4" /> */}
             <Button onClick={() => callbacks.onBuy(product.id)} variant="primary">
               {isInCart ? <Icon name="check" size={18} /> : 'Buy'}

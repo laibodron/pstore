@@ -1,28 +1,26 @@
 import type { TrpcRouterOutput } from '@pstore/backend/src/router'
-import { Button, Card, Col, Row } from 'react-bootstrap'
+import { Button, Card, Col, Row, Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 import { getViewItemRoute } from '../../lib/routes'
 import { Icon } from '../Icon'
 
-type productType = Pick<TrpcRouterOutput['getProduct']['product'], 'id' | 'title' | 'price'> & {
-  description?: string | null
-  countInCart?: number
-  isInWishlist?: boolean
-  images?: string[]
-}
-
 const HorizontalCard = ({
   product,
   link = getViewItemRoute({ itemId: product.id }),
   onBuy = () => ({}),
-  onAddToWishlist = () => ({}),
+  onAddToWishlist = () => {
+    /* empty */
+  },
+  heartLoading = false,
 }: {
-  product: productType
+  product: TrpcRouterOutput['getProduct']['product']
   link?: string
   onBuy?: () => void
-  onAddToWishlist: () => void
+  onAddToWishlist: () => Promise<void> | void
+  heartLoading: boolean
 }) => {
+  const countInCart = 0
   return (
     <Card className="mb-3">
       <Row className="g-0 align-items-center">
@@ -52,14 +50,14 @@ const HorizontalCard = ({
               <div>
                 <Icon
                   onClick={onAddToWishlist}
-                  name={product.isInWishlist ? 'dashedHeart' : 'heart'}
+                  name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
                   size={24}
                   className="me-4"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', opacity: heartLoading ? 0.5 : 1 }}
                 />
 
-                <Button onClick={onBuy} variant={product.countInCart ? 'outline-primary' : 'primary'}>
-                  {!product.countInCart ? 'Buy' : <Icon name="check" size={18} />}
+                <Button onClick={onBuy} variant={countInCart ? 'outline-primary' : 'primary'}>
+                  {!countInCart ? 'Buy' : <Icon name="check" size={18} />}
                 </Button>
               </div>
             </div>

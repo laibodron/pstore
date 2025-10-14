@@ -1,5 +1,5 @@
 import type { TrpcRouterOutput } from '@pstore/backend/src/router'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { Button, Card, Col, FormControl, InputGroup, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
@@ -21,12 +21,10 @@ const CartItem = ({
   onRemove: () => void
 }) => {
   const increment = useCallback(() => {
-    // setCount((c) => c + 1)
     onAdd(1)
   }, [onAdd, onRemove, product.quantity])
 
   const decrement = useCallback(() => {
-    // setCount((c) => (c > 1 ? c - 1 : 1))
     if (product.quantity === 1) {
       onRemove()
       return
@@ -71,8 +69,8 @@ const CartItem = ({
                 </InputGroup>
               </div>
               <div>
-                <Icon name="heart" size={24} className="me-3" style={{ cursor: 'pointer' }}/>
-                <Icon onClick={onRemove} name="trash" size={24} style={{ cursor: 'pointer' }}/>
+                <Icon name="heart" size={24} className="me-3" style={{ cursor: 'pointer' }} />
+                <Icon onClick={onRemove} name="trash" size={24} style={{ cursor: 'pointer' }} />
               </div>
             </div>
           </Card.Body>

@@ -73,6 +73,9 @@ export default [
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
 
+      "no-empty-function": "off",
+      "@typescript-eslint/no-empty-function": "warn",
+
       "jsx-a11y/anchor-is-valid": "off",
       "curly": ["error", "all"],
       "no-irregular-whitespace": [

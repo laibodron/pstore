@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 import HorizontalCard from '../../components/HorizontalCard'
 import PageWithTitle from '../../components/PageWithTitle'
+import ProductCard from '../../components/ProductCard'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
 import useCartStore from '../../lib/store/useCart'
 import useWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
+import { useProductFavorite } from '../../lib/useProductFavorite'
 
 const CatalogPage = withPageWrapper({
   useQuery: () => trpc.getProducts.useQuery(),
@@ -18,29 +20,8 @@ const CatalogPage = withPageWrapper({
   }),
 
   title: 'Catalog',
+  showLoaderOnFetching: false,
 })(({ products, countProd, me }) => {
-  const navigate = useNavigate()
-  const addToWishlist = useWishlistState((state) => state.addItem)
-  const wishlist: { id: string }[] = useWishlistState((state) => state.items)
-  const addToCart = useCartStore((state) => state.addItem)
-  const cartList = useCartStore((state) => state.items)
-  const productsWithCartAndWishlist = products.map((product) => ({
-    ...product,
-    countInCart: cartList.find((i) => i.id === product.id)?.quantity || 0,
-    isInWishlist: !!wishlist.find((el) => product.id === el.id),
-  }))
-  const callbacks = {
-    onBuy: (id: string) => {
-      if (productsWithCartAndWishlist.find((p) => p.id === id)?.countInCart) {
-        navigate(getCartRoute())
-      } else {
-        addToCart(id)
-      }
-    },
-    onAddToWishlist: (id: string) => {
-      addToWishlist(id)
-    },
-  }
   return (
     <PageWithTitle title="Catalog" subtitle={`${countProd} products`}>
       <Row>
@@ -92,13 +73,8 @@ const CatalogPage = withPageWrapper({
                 <option value="2">Two</option>
                 <option value="3">Three</option>
               </Form.Select>
-              {productsWithCartAndWishlist.map((product) => (
-                <HorizontalCard
-                  onAddToWishlist={() => callbacks.onAddToWishlist(product.id)}
-                  onBuy={() => callbacks.onBuy(product.id)}
-                  key={product.id}
-                  product={product}
-                />
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
 
               <div className="mt-3 d-flex justify-content-center">
