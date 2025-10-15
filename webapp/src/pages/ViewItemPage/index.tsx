@@ -5,11 +5,10 @@ import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '../../components/Icon'
 import PageWithTitle from '../../components/PageWithTitle'
+import { useProductFavorite } from '../../hooks/useProductFavorite'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
-import useCartStore from '../../lib/store/useCart'
 import { trpc } from '../../lib/trpc'
-import { useProductFavorite } from '../../lib/useProductFavorite'
 
 const FavoriteButton = ({ product }: { product: NonNullable<TrpcRouterOutput['getProduct']['product']> }) => {
   const { toggleFavorite, isPending } = useProductFavorite({ productId: product.id })
@@ -20,7 +19,6 @@ const FavoriteButton = ({ product }: { product: NonNullable<TrpcRouterOutput['ge
       ) : (
         <Icon
           onClick={() => {
-            console.log('Heart click')
             toggleFavorite(!product.isFavoriteByMe).then(() => {
               if (!product.isFavoriteByMe) {
                 // log it to mixpanel
@@ -50,18 +48,15 @@ const ViewItemPage = withPageWrapper({
   title: ({ product }) => product.title,
 })(({ product, me }) => {
   const navigate = useNavigate()
-  const addToCart = useCartStore((state) => state.addItem)
-  const cartList = useCartStore((state) => state.items)
-
-  const isInCart = cartList.find((el) => el.id === product.id && el.quantity > 0)
+  const setCart = trpc.addToCart.useMutation()
   const callbacks = {
-    onBuy: (id: string) => {
-      if (cartList.find((p) => p.id === id)?.quantity) {
-        navigate(getCartRoute())
-      } else {
-        addToCart(id)
-      }
-    },
+    // onBuy: (id: string) => {
+    //   if (cartList.find((p) => p.id === id)?.quantity) {
+    //     navigate(getCartRoute())
+    //   } else {
+    //     addToCart(id)
+    //   }
+    // },
   }
 
   return (
@@ -81,8 +76,17 @@ const ViewItemPage = withPageWrapper({
           <div>
             <FavoriteButton product={product} />
             {/* <Icon name="heart" size={24} className="me-4" /> */}
-            <Button onClick={() => callbacks.onBuy(product.id)} variant="primary">
-              {isInCart ? <Icon name="check" size={18} /> : 'Buy'}
+            <Button
+              onClick={async () => {
+                if (product.isInCart) {
+                  navigate(getCartRoute())
+                } else {
+                  await setCart.mutateAsync({ productId: product.id, count: 2 })
+                }
+              }}
+              variant={`${product.isInCart ? 'outline-' : ''}primary`}
+            >
+              {product.isInCart ? <Icon name="check" size={18} /> : 'Buy'}
             </Button>
           </div>
         </Col>

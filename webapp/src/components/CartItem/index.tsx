@@ -1,38 +1,26 @@
 import type { TrpcRouterOutput } from '@pstore/backend/src/router'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Button, Card, Col, FormControl, InputGroup, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 import { Icon } from '../Icon'
 
-type productType = Pick<TrpcRouterOutput['getProduct']['product'], 'id' | 'title' | 'price'> & {
-  quantity: number
-}
+type productType = TrpcRouterOutput['getCartList']['cartList']
+type productItemType = productType[number]
 
 const CartItem = ({
   product,
   link,
-  onAdd = () => ({}),
-  onRemove = () => ({}),
+  onIncrement = () => {},
+  onDecrement = () => {},
+  onRemove = () => {},
 }: {
-  product: productType
+  product: productItemType
   link?: string
-  onAdd: (arg0: number) => void
-  onRemove: () => void
+  onIncrement?: () => Promise<void> | void
+  onDecrement?: () => Promise<void> | void
+  onRemove?: () => Promise<void> | void
 }) => {
-  const increment = useCallback(() => {
-    onAdd(1)
-  }, [onAdd, onRemove, product.quantity])
-
-  const decrement = useCallback(() => {
-    if (product.quantity === 1) {
-      onRemove()
-      return
-    } else {
-      onAdd(-1)
-    }
-  }, [onAdd, onRemove, product.quantity])
-
   return (
     <Card className="mb-3">
       <Row className="g-0 align-items-center">
@@ -59,11 +47,11 @@ const CartItem = ({
             <div className="d-flex justify-content-between h-100">
               <div className="d-flex flex-column justify-content-between gap-4">
                 <InputGroup style={{ maxWidth: '140px' }}>
-                  <Button variant="outline-secondary" onClick={decrement}>
+                  <Button variant="outline-secondary" onClick={onDecrement}>
                     –
                   </Button>
-                  <FormControl value={product.quantity} readOnly className="text-center" />
-                  <Button variant="outline-secondary" onClick={increment}>
+                  <FormControl value={product.countInCart} readOnly className="text-center" />
+                  <Button variant="outline-secondary" onClick={onIncrement}>
                     +
                   </Button>
                 </InputGroup>

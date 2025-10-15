@@ -1,4 +1,4 @@
-import { trpc } from './trpc'
+import { trpc } from '../lib/trpc'
 
 export const useProductFavorite = ({ productId }: { productId: string }) => {
   const trpcUtils = trpc.useUtils()

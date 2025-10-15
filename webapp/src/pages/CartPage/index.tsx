@@ -1,59 +1,53 @@
-import { useCallback } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 
 import CartItem from '../../components/CartItem'
 import PageWithTitle from '../../components/PageWithTitle'
+import { useProductCart } from '../../hooks/useProductCart'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getViewItemRoute } from '../../lib/routes'
-import useCart from '../../lib/store/useCart'
 import { trpc } from '../../lib/trpc'
 
 const CartPage = withPageWrapper({
   useQuery: () => {
-    const items = useCart((state) => state.items)
-    return trpc.getProductsById.useQuery({
-      ids: items.map((i) => i.id),
-    })
+    return trpc.getCartList.useQuery()
   },
   setProps: ({ queryResult, ctx }) => ({
-    products: queryResult.data.productsById,
-    count: queryResult.data.count,
+    products: queryResult.data.cartList,
     me: ctx.me,
   }),
   title: 'Cart',
-})(({ products, count, me }) => {
-  const cart = useCart()
-  const productsWithInCart = products.map((product) => ({
-    ...product,
-    quantity: cart.items.find((i) => i.id === product.id)?.quantity || 1,
-  }))
+  showLoaderOnFetching: false,
+})(({ products }) => {
+  const { updateCart } = useProductCart()
 
   const callbacks = {
-    onAdd: useCallback(
-      (id: string, count: number) => {
-        cart.addItem(id, count)
-      },
-      [cart]
-    ),
-    onRemove: useCallback(
-      (id: string) => {
-        cart.removeItem(id)
-      },
-      [cart]
-    ),
-    onClear: useCallback(() => {
-      cart.clearCart()
-    }, [cart]),
+    onClear: async () => {
+      await Promise.all(
+        products.map((product) =>
+          updateCart({
+            productId: product.id,
+            count: 0,
+          })
+        )
+      )
+    },
+    onSetCount: async (product: (typeof products)[number], callback: (c: number) => number) => {
+      await updateCart({
+        productId: product.id,
+        count: callback(product.countInCart),
+      })
+    },
   }
 
   return (
-    <PageWithTitle title="Cart" subtitle={`${count} товара`}>
+    <PageWithTitle title="Cart" subtitle={`${products.reduce((prevVal, el) => prevVal + el.countInCart, 0)} товара`}>
       <Row>
         <Col md={8}>
-          {productsWithInCart.map((product) => (
+          {products.map((product) => (
             <CartItem
-              onAdd={(count: number) => callbacks.onAdd(product.id, count)}
-              onRemove={() => callbacks.onRemove(product.id)}
+              onIncrement={() => callbacks.onSetCount(product, (c) => c + 1)}
+              onDecrement={() => callbacks.onSetCount(product, (c) => c - 1)}
+              onRemove={() => callbacks.onSetCount(product, () => 0)}
               link={getViewItemRoute({ itemId: product.id })}
               key={product.id}
               product={product}
@@ -67,12 +61,12 @@ const CartPage = withPageWrapper({
             </Row>
             <Row>
               <Col className="fw-bold d-flex justify-content-between align-items-center">
-                <div>{productsWithInCart.reduce((prevVal, el) => prevVal + el.quantity, 0)} товар</div>
-                <div>{productsWithInCart.reduce((prevVal, el) => prevVal + el.quantity * el.price, 0)}$</div>
+                <div>{products.reduce((prevVal, el) => prevVal + el.countInCart, 0)} товар</div>
+                <div>{products.reduce((prevVal, el) => prevVal + el.countInCart * el.price, 0)}$</div>
               </Col>
             </Row>
           </Card>
-          <Button onClick={callbacks.onClear} variant="danger" className="mb-3">
+          <Button onClick={() => callbacks.onClear()} variant="danger" className="mb-3">
             Clear
           </Button>
         </Col>

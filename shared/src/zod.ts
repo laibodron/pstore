@@ -22,7 +22,7 @@ export const zNickRequired = zStringRequired.regex(
   'Nick may contain only lowercase letters, numbers and dashes'
 )
 export const zNameRequired = zStringRequired.regex(
-  /^[a-zA-Zа-яА-ЯёЁіІїЇєЄ'`-]+$/,
+  /^[a-zA-Zа-яА-ЯёЁіІєЄ'`-]+$/,
   'Name may contain only letters, apostrophes, backticks and dashes'
 )
 export const zStringMin = (min: number) => zStringRequired.min(min, `Text should be at least ${min} characters long`)

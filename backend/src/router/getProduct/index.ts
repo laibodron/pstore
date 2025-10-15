@@ -13,8 +13,12 @@ export const getProductTrpcRoute = trpcLoggedProcedure.input(zGetProductInput).q
     },
     include: {
       productFavorite: {
-        where: { userId: ctx.me?.id },
+        where: { userId: ctx.me?.id, productId: input.productId },
         select: { id: true },
+      },
+      productCart: {
+        where: { userId: ctx.me?.id, productId: input.productId },
+        select: { id: true, count: true },
       },
     },
   })
@@ -23,15 +27,14 @@ export const getProductTrpcRoute = trpcLoggedProcedure.input(zGetProductInput).q
     throw new ExpectedError('Product not found')
   }
 
-  // if (product.images.length) {
-  //   product.images = product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'large'))
-  // } else {
-  //   product.images = ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
-  // }
   rawProduct.images = rawProduct.images.length
     ? rawProduct.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'large'))
     : ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
-  const product = { ...omit(rawProduct, ['productFavorite']), isFavoriteByMe: rawProduct.productFavorite.length > 0 }
+  const product = {
+    ...omit(rawProduct, ['productFavorite', 'productCart']),
+    isFavoriteByMe: rawProduct.productFavorite.length > 0,
+    isInCart: rawProduct.productCart.length > 0,
+  }
 
   return { product }
 })

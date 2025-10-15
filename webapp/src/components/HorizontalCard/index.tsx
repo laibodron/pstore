@@ -9,18 +9,17 @@ const HorizontalCard = ({
   product,
   link = getViewItemRoute({ itemId: product.id }),
   onBuy = () => ({}),
-  onAddToWishlist = () => {
-    /* empty */
-  },
+  onAddToWishlist = () => {},
   heartLoading = false,
+  cartLoading = false,
 }: {
   product: TrpcRouterOutput['getProduct']['product']
   link?: string
   onBuy?: () => void
   onAddToWishlist: () => Promise<void> | void
-  heartLoading: boolean
+  heartLoading?: boolean
+  cartLoading?: boolean
 }) => {
-  const countInCart = 0
   return (
     <Card className="mb-3">
       <Row className="g-0 align-items-center">
@@ -56,8 +55,14 @@ const HorizontalCard = ({
                   style={{ cursor: 'pointer', opacity: heartLoading ? 0.5 : 1 }}
                 />
 
-                <Button onClick={onBuy} variant={countInCart ? 'outline-primary' : 'primary'}>
-                  {!countInCart ? 'Buy' : <Icon name="check" size={18} />}
+                <Button onClick={onBuy} variant={product.isInCart ? 'outline-primary' : 'primary'}>
+                  {cartLoading ? (
+                    <Spinner role="status" size="sm" />
+                  ) : !product.isInCart ? (
+                    'Buy'
+                  ) : (
+                    <Icon name="check" size={18} />
+                  )}
                 </Button>
               </div>
             </div>

@@ -1,29 +1,23 @@
 import { Accordion, Button, Col, Form, Pagination, Row } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
 
-import HorizontalCard from '../../components/HorizontalCard'
 import PageWithTitle from '../../components/PageWithTitle'
 import ProductCard from '../../components/ProductCard'
 import { withPageWrapper } from '../../lib/pageWrapper'
-import { getCartRoute, getViewItemRoute } from '../../lib/routes'
-import useCartStore from '../../lib/store/useCart'
-import useWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
-import { useProductFavorite } from '../../lib/useProductFavorite'
 
 const CatalogPage = withPageWrapper({
   useQuery: () => trpc.getProducts.useQuery(),
   setProps: ({ queryResult, ctx }) => ({
     products: queryResult.data.products,
-    countProd: queryResult.data.count,
+    count: queryResult.data.count,
     me: ctx.me,
   }),
 
   title: 'Catalog',
   showLoaderOnFetching: false,
-})(({ products, countProd, me }) => {
+})(({ products, count }) => {
   return (
-    <PageWithTitle title="Catalog" subtitle={`${countProd} products`}>
+    <PageWithTitle title="Catalog" subtitle={`${count} products`}>
       <Row>
         <Col>
           <Accordion defaultActiveKey="0" alwaysOpen>

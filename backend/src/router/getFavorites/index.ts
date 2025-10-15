@@ -1,7 +1,6 @@
 import { getCloudinaryUploadUrl } from '@pstore/shared/src/cloudinary'
 
 import { ExpectedError } from '../../lib/error'
-import { logger } from '../../lib/logger'
 import { trpcLoggedProcedure } from '../../lib/trpc'
 
 export const getFavoritesTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) => {
