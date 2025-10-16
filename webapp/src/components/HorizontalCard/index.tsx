@@ -16,7 +16,7 @@ const HorizontalCard = ({
   product: TrpcRouterOutput['getProduct']['product']
   link?: string
   onBuy?: () => void
-  onAddToWishlist: () => Promise<void> | void
+  onAddToWishlist?: () => Promise<void> | void
   heartLoading?: boolean
   cartLoading?: boolean
 }) => {
@@ -48,14 +48,18 @@ const HorizontalCard = ({
               {/* className="d-flex h-100 align-items-center align-items-end" */}
               <div>
                 <Icon
-                  onClick={onAddToWishlist}
+                  onClick={() => (heartLoading ? '' : onAddToWishlist())}
                   name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
                   size={24}
-                  className="me-4"
+                  className={`${heartLoading ? 'disabled ' : ''}me-4`}
                   style={{ cursor: 'pointer', opacity: heartLoading ? 0.5 : 1 }}
                 />
 
-                <Button onClick={onBuy} variant={product.isInCart ? 'outline-primary' : 'primary'}>
+                <Button
+                  disabled={cartLoading}
+                  onClick={onBuy}
+                  variant={product.isInCart ? 'outline-primary' : 'primary'}
+                >
                   {cartLoading ? (
                     <Spinner role="status" size="sm" />
                   ) : !product.isInCart ? (

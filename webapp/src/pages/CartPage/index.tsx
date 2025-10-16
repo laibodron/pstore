@@ -3,6 +3,7 @@ import { Button, Card, Col, Row } from 'react-bootstrap'
 import CartItem from '../../components/CartItem'
 import PageWithTitle from '../../components/PageWithTitle'
 import { useProductCart } from '../../hooks/useProductCart'
+import { useProductFavorite } from '../../hooks/useProductFavorite'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getViewItemRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
@@ -19,6 +20,7 @@ const CartPage = withPageWrapper({
   showLoaderOnFetching: false,
 })(({ products }) => {
   const { updateCart } = useProductCart()
+  const { toggleFavorite } = useProductFavorite()
 
   const callbacks = {
     onClear: async () => {
@@ -45,6 +47,7 @@ const CartPage = withPageWrapper({
         <Col md={8}>
           {products.map((product) => (
             <CartItem
+              onAddToWishlist={() => toggleFavorite({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe })}
               onIncrement={() => callbacks.onSetCount(product, (c) => c + 1)}
               onDecrement={() => callbacks.onSetCount(product, (c) => c - 1)}
               onRemove={() => callbacks.onSetCount(product, () => 0)}

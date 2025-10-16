@@ -1,5 +1,4 @@
 import type { TrpcRouterOutput } from '@pstore/backend/src/router'
-import { useCallback, useState } from 'react'
 import { Button, Card, Col, FormControl, InputGroup, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
@@ -14,23 +13,21 @@ const CartItem = ({
   onIncrement = () => {},
   onDecrement = () => {},
   onRemove = () => {},
+  onAddToWishlist = () => {},
 }: {
   product: productItemType
   link?: string
   onIncrement?: () => Promise<void> | void
   onDecrement?: () => Promise<void> | void
   onRemove?: () => Promise<void> | void
+  onAddToWishlist?: () => Promise<void> | void
 }) => {
   return (
     <Card className="mb-3">
       <Row className="g-0 align-items-center">
         {/* Фото слева */}
         <Col as={Link} to={link} md={3}>
-          <Card.Img
-            src="https://vkplay.ru/hotbox/content_files/UgcStories/2025/04/28/b308f6f54026482a87807c7708d06eaf.png"
-            alt="product"
-            className="img-fluid rounded-start d-flex"
-          />
+          <Card.Img src={product.images[0]} alt="product" className="img-fluid rounded-start d-flex" />
         </Col>
 
         {/* Контент справа */}
@@ -57,7 +54,13 @@ const CartItem = ({
                 </InputGroup>
               </div>
               <div>
-                <Icon name="heart" size={24} className="me-3" style={{ cursor: 'pointer' }} />
+                <Icon
+                  name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
+                  size={24}
+                  className="me-3"
+                  style={{ cursor: 'pointer' }}
+                  onClick={onAddToWishlist}
+                />
                 <Icon onClick={onRemove} name="trash" size={24} style={{ cursor: 'pointer' }} />
               </div>
             </div>

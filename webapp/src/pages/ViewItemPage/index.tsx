@@ -5,32 +5,29 @@ import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '../../components/Icon'
 import PageWithTitle from '../../components/PageWithTitle'
+import { useProductCart } from '../../hooks/useProductCart'
 import { useProductFavorite } from '../../hooks/useProductFavorite'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
 import { trpc } from '../../lib/trpc'
 
 const FavoriteButton = ({ product }: { product: NonNullable<TrpcRouterOutput['getProduct']['product']> }) => {
-  const { toggleFavorite, isPending } = useProductFavorite({ productId: product.id })
+  const { toggleFavorite, isPending } = useProductFavorite()
   return (
     <>
-      {isPending ? (
-        <Spinner animation="border" className="me-4" />
-      ) : (
-        <Icon
-          onClick={() => {
-            toggleFavorite(!product.isFavoriteByMe).then(() => {
-              if (!product.isFavoriteByMe) {
-                // log it to mixpanel
-              }
-            })
-          }}
-          name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
-          size={24}
-          className="me-4"
-          style={{ cursor: 'pointer' }}
-        />
-      )}
+      <Icon
+        onClick={() => {
+          toggleFavorite({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe }).then(() => {
+            if (!product.isFavoriteByMe) {
+              // log it to mixpanel
+            }
+          })
+        }}
+        name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
+        size={24}
+        className="me-4 "
+        style={{ cursor: 'pointer', opacity: isPending ? 0.5 : 1 }}
+      />
     </>
   )
 }
@@ -48,16 +45,7 @@ const ViewItemPage = withPageWrapper({
   title: ({ product }) => product.title,
 })(({ product, me }) => {
   const navigate = useNavigate()
-  const setCart = trpc.addToCart.useMutation()
-  const callbacks = {
-    // onBuy: (id: string) => {
-    //   if (cartList.find((p) => p.id === id)?.quantity) {
-    //     navigate(getCartRoute())
-    //   } else {
-    //     addToCart(id)
-    //   }
-    // },
-  }
+  const { updateCart, isPending: isPendingCart } = useProductCart()
 
   return (
     <PageWithTitle title={product.title}>
@@ -75,18 +63,23 @@ const ViewItemPage = withPageWrapper({
           <div className="me-4 fs-3 h-auto">{product.price}$</div>
           <div>
             <FavoriteButton product={product} />
-            {/* <Icon name="heart" size={24} className="me-4" /> */}
             <Button
               onClick={async () => {
                 if (product.isInCart) {
                   navigate(getCartRoute())
                 } else {
-                  await setCart.mutateAsync({ productId: product.id, count: 2 })
+                  await updateCart({ productId: product.id, count: 1 })
                 }
               }}
               variant={`${product.isInCart ? 'outline-' : ''}primary`}
             >
-              {product.isInCart ? <Icon name="check" size={18} /> : 'Buy'}
+              {isPendingCart ? (
+                <Spinner role="status" size="sm" />
+              ) : product.isInCart ? (
+                <Icon name="check" size={18} />
+              ) : (
+                'Buy'
+              )}
             </Button>
           </div>
         </Col>

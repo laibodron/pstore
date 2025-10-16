@@ -7,6 +7,7 @@ export const useProductCart = () => {
       await Promise.all([trpcUtils.getCartList.cancel(), trpcUtils.getProducts.cancel()])
       const prevCart = trpcUtils.getCartList.getData()
       const prevProducts = trpcUtils.getProducts.getData()
+      const prevFavorites = trpcUtils.getFavorites.getData()
 
       if (prevCart) {
         const newCartList =
@@ -24,26 +25,53 @@ export const useProductCart = () => {
 
       // обновляем кэш getProducts
       if (prevProducts) {
-        trpcUtils.getProducts.setData(undefined, {
-          ...prevProducts,
-          products: prevProducts.products.map((p) =>
-            p.id === vars.productId ? { ...p, isInCart: vars.count > 0, countInCart: vars.count } : p
-          ),
+        trpcUtils.getProducts.setData(
+          {},
+          {
+            ...prevProducts,
+            products: prevProducts.products.map((p) =>
+              p.id === vars.productId ? { ...p, isInCart: vars.count > 0, countInCart: vars.count } : p
+            ),
+          }
+        )
+      }
+
+      if (prevFavorites) {
+        const newFavorites =
+          vars.count > 0
+            ? prevFavorites.favorites.map((p) =>
+                p.id === vars.productId ? { ...p, isInCart: true, countInCart: vars.count } : p
+              )
+            : prevFavorites.favorites.map((p) =>
+                p.id === vars.productId ? { ...p, isInCart: false, countInCart: 0 } : p
+              )
+
+        trpcUtils.getFavorites.setData(undefined, {
+          ...prevFavorites,
+          favorites: newFavorites,
         })
       }
 
-      return { prevCart, prevProducts }
+      return { prevCart, prevProducts, prevFavorites }
     },
     onError: (_err, _vars, ctx) => {
       if (ctx?.prevCart) {
         trpcUtils.getCartList.setData(undefined, ctx.prevCart)
       }
       if (ctx?.prevProducts) {
-        trpcUtils.getProducts.setData(undefined, ctx.prevProducts)
+        trpcUtils.getProducts.setData({}, ctx.prevProducts)
+      }
+      if (ctx?.prevFavorites) {
+        trpcUtils.getFavorites.setData(undefined, ctx.prevFavorites)
       }
     },
-    onSettled: async () => {
-      await Promise.all([trpcUtils.getCartList.invalidate(), trpcUtils.getProducts.invalidate()])
+    onSettled: async (_data, _error, vars) => {
+      await Promise.all([
+        trpcUtils.getCartList.invalidate(),
+        trpcUtils.getProducts.invalidate(),
+        trpcUtils.getFavorites.invalidate(),
+        trpcUtils.getProduct.invalidate({ productId: vars.productId }),
+      ])
     },
   })
 

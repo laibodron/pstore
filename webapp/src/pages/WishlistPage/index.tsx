@@ -13,11 +13,12 @@ const WishlistPage = withPageWrapper({
     me: ctx.me,
   }),
   title: 'Wishlist',
+  showLoaderOnFetching: false,
 })(({ products, count, me }) => {
   return (
     <PageWithTitle title="Wishlist" subtitle={`${count} product`}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={{ ...product, isInCart: true }} />
+        <ProductCard key={product.id} product={{ ...product }} />
       ))}
     </PageWithTitle>
   )

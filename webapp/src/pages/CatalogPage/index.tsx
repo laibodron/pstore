@@ -1,21 +1,60 @@
-import { Accordion, Button, Col, Form, Pagination, Row } from 'react-bootstrap'
+import { zGetProductsInput } from '@pstore/backend/src/router/getProducts/input'
+import { useEffect, useState } from 'react'
+import { Accordion, Button, Col, Form, Row } from 'react-bootstrap'
+import { useSearchParams } from 'react-router-dom'
 
 import PageWithTitle from '../../components/PageWithTitle'
+import PaginationC from '../../components/PaginationC'
 import ProductCard from '../../components/ProductCard'
+import { useForm } from '../../lib/form'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { trpc } from '../../lib/trpc'
 
 const CatalogPage = withPageWrapper({
-  useQuery: () => trpc.getProducts.useQuery(),
-  setProps: ({ queryResult, ctx }) => ({
-    products: queryResult.data.products,
-    count: queryResult.data.count,
+  useQuery: () => undefined,
+  setProps: ({ ctx }) => ({
     me: ctx.me,
   }),
 
   title: 'Catalog',
   showLoaderOnFetching: false,
-})(({ products, count }) => {
+})(({ me }) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Number(searchParams.get('page') || 1)
+
+  const { formik } = useForm({
+    initialValues: {
+      sort: 'price-asc',
+      limit: 10,
+    },
+    validationSchema: zGetProductsInput.pick({ sort: true, limit: true }),
+  })
+
+  const { data, isFetching, isPlaceholderData } = trpc.getProducts.useQuery(
+    { page, limit: formik.values.limit, sort: formik.values.sort },
+    { placeholderData: (previousData) => previousData }
+  )
+
+  // useEffect(() => {
+  //   console.log('formik.values.sort ', formik.values.sort)
+  // }, [formik.values.sort])
+
+  const products = data?.products ?? []
+  const count = data?.count ?? 0
+  const totalCountPages = data?.totalCountPages ?? 0
+
+  const goToPage = (p: number, withScroll: boolean = true) => {
+    if (p >= 1 && p <= totalCountPages) {
+      setSearchParams({ page: String(p) })
+      if (withScroll) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        })
+      }
+    }
+  }
+
   return (
     <PageWithTitle title="Catalog" subtitle={`${count} products`}>
       <Row>
@@ -61,37 +100,59 @@ const CatalogPage = withPageWrapper({
         </Col>
         <Col md={9}>
           <Row>
-            <Col>
-              <Form.Select name="sort" aria-label="Default select example" className="mb-4 w-auto">
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+            <Col className={`${isFetching && isPlaceholderData ? 'opacity-50' : ''}`}>
+              <Form.Select
+                value={formik.values.sort}
+                onChange={(e) => {
+                  goToPage(1, false)
+                  formik.handleChange(e)
+                }}
+                onBlur={formik.handleBlur}
+                name="sort"
+                aria-label="price-desc"
+                className="mb-4 w-auto"
+              >
+                <option value="price-asc">Сначала недорогие</option>
+                <option value="price-desc">Сначала дорогие</option>
+                <option value="name-asc">По названию (возр)</option>
+                <option value="name-desc">По названию (убыв)</option>
+                <option value="time-desc">Сначала новые</option>
               </Form.Select>
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-
-              <div className="mt-3 d-flex justify-content-center">
-                <Button variant="primary">More</Button>
+              <div>
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
-              <div className="mt-5 d-flex justify-content-center">
-                <Pagination>
-                  <Pagination.First />
-                  <Pagination.Prev />
-                  <Pagination.Item>{1}</Pagination.Item>
-                  <Pagination.Ellipsis />
 
-                  <Pagination.Item>{10}</Pagination.Item>
-                  <Pagination.Item>{11}</Pagination.Item>
-                  <Pagination.Item active>{12}</Pagination.Item>
-                  <Pagination.Item>{13}</Pagination.Item>
-                  <Pagination.Item disabled>{14}</Pagination.Item>
-
-                  <Pagination.Ellipsis />
-                  <Pagination.Item>{20}</Pagination.Item>
-                  <Pagination.Next />
-                  <Pagination.Last />
-                </Pagination>
+              {/* <div className="mt-3 d-flex justify-content-center">
+                <Button variant="primary">More</Button>
+              </div> */}
+              <div className="mt-5 d-flex justify-content-between align-items-center">
+                {!!totalCountPages && (
+                  <>
+                    <PaginationC
+                      disabled={isFetching}
+                      totalCountPages={totalCountPages}
+                      currentPage={page}
+                      setCurrentPage={goToPage}
+                    />
+                    <Form.Select
+                      value={formik.values.limit}
+                      onChange={(e) => {
+                        goToPage(1, false)
+                        formik.handleChange(e)
+                      }}
+                      onBlur={formik.handleBlur}
+                      name="limit"
+                      aria-label="price-desc"
+                      className="w-auto"
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </Form.Select>
+                  </>
+                )}
               </div>
             </Col>
           </Row>

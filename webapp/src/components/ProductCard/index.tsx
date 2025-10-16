@@ -7,14 +7,14 @@ import { getCartRoute } from '../../lib/routes'
 import HorizontalCard from '../HorizontalCard'
 
 const ProductCard = ({ product }: { product: TrpcRouterOutput['getProduct']['product'] }) => {
-  const { toggleFavorite, isPending: favoriteIsPending } = useProductFavorite({ productId: product.id })
+  const { toggleFavorite, isPending: favoriteIsPending } = useProductFavorite()
   const { updateCart, isPending: cartIsPending } = useProductCart()
   const navigate = useNavigate()
   return (
     <HorizontalCard
       key={product.id}
       product={product}
-      onAddToWishlist={() => toggleFavorite(!product.isFavoriteByMe)}
+      onAddToWishlist={() => toggleFavorite({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe })}
       onBuy={() => {
         if (product.isInCart) {
           navigate(getCartRoute())

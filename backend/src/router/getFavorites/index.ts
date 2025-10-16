@@ -20,6 +20,10 @@ export const getFavoritesTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) =
           createdAt: true,
           description: true,
           images: true,
+          productCart: {
+            where: { userId: ctx.me?.id },
+            select: { id: true },
+          },
         },
       },
     },
@@ -36,6 +40,7 @@ export const getFavoritesTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) =
     description: fav.product.description,
     createdAt: fav.product.createdAt,
     isFavoriteByMe: true,
+    isInCart: fav.product.productCart.length > 0,
     article: fav.product.article,
   }))
   return {
