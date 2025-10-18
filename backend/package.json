@@ -17,6 +17,7 @@
     "prepare": "pnpm pgc && ts-patch install -s"
   },
   "dependencies": {
+    "@a2seven/yoo-checkout": "^1.1.4",
     "@prisma/client": "^6.16.3",
     "@pstore/shared": "workspace:*",
     "@pstore/webapp": "workspace:*",

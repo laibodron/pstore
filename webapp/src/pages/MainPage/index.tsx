@@ -27,7 +27,7 @@ const MainPage = withPageWrapper({
             <Card.Body>
               <Card.Title>{product.title}</Card.Title>
               <Card.Text className="d-flex justify-content-between align-items-center fs-5 mt-4">
-                {product.price}$
+                {product.price + ''}₽
               </Card.Text>
             </Card.Body>
           </Card>

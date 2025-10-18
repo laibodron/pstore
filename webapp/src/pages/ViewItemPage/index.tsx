@@ -60,7 +60,7 @@ const ViewItemPage = withPageWrapper({
           </Carousel>
         </Col>
         <Col className="d-flex justify-content-end">
-          <div className="me-4 fs-3 h-auto">{product.price}$</div>
+          <div className="me-4 fs-3 h-auto">{product.price + ' '}₽</div>
           <div>
             <FavoriteButton product={product} />
             <Button

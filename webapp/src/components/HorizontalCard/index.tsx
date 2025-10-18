@@ -38,7 +38,7 @@ const HorizontalCard = ({
           <Card.Body className="h-100">
             <Card.Title as={Link} to={link} className="d-flex justify-content-between align-items-center mb-3 fs-5">
               <div className="w-75">{product.title}</div>
-              <div className="fw-bold">{product.price}$</div>
+              <div className="fw-bold">{product.price + ' '}₽</div>
             </Card.Title>
             <div className="d-flex justify-content-between h-100">
               <div className="d-flex flex-column justify-content-between gap-4">

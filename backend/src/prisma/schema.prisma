@@ -20,6 +20,7 @@ model User {
   createdAt   DateTime          @default(now())
   wishlist    ProductFavorite[]
   productCart ProductCart[]
+  orders      Order[]
 }
 
 model Product {
@@ -32,6 +33,7 @@ model Product {
   images          String[]          @default([])
   productFavorite ProductFavorite[]
   productCart     ProductCart[]
+  orderStructures OrderStructure[]
 }
 
 model ProductFavorite {
@@ -55,4 +57,38 @@ model ProductCart {
   count     Int
 
   @@unique([userId, productId])
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id              String           @id @default(uuid())
+  serialNumber    Int              @unique @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  totalPrice      Int
+  paymentId       String?
+  userId          String?
+  user            User?            @relation(fields: [userId], references: [id])
+  phoneNumber     String
+  email           String?
+  status          OrderStatus      @default(CREATED)
+  orderStructures OrderStructure[]
+
+  @@index([userId])
+}
+
+model OrderStructure {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  price     Int
+  count     Int
 }

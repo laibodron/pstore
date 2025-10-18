@@ -4,6 +4,7 @@ import { createTrpcRouter } from '../lib/trpc'
 
 // @index('./**/index.ts', f => `import { ${f.path.split('/').slice(0, -1).pop()}TrpcRoute } from '${f.path.split('/').slice(0, -1).join('/')}'`)
 import { addToCartTrpcRoute } from './addToCart'
+import { createOrderTrpcRoute } from './createOrder'
 import { createProductTrpcRoute } from './createProduct'
 import { getCartListTrpcRoute } from './getCartList'
 import { getFavoritesTrpcRoute } from './getFavorites'
@@ -23,6 +24,7 @@ import { updateProfileTrpcRoute } from './updateProfile'
 export const trpcRouter = createTrpcRouter({
   // @index('./**/index.ts', f => `${f.path.split('/').slice(0, -1).pop()}: ${f.path.split('/').slice(0, -1).pop()}TrpcRoute,`)
   addToCart: addToCartTrpcRoute,
+  createOrder: createOrderTrpcRoute,
   createProduct: createProductTrpcRoute,
   getCartList: getCartListTrpcRoute,
   getFavorites: getFavoritesTrpcRoute,

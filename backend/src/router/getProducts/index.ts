@@ -24,17 +24,7 @@ export const getProductsTrpcRoute = trpcLoggedProcedure.input(zGetProductsInput)
         },
       },
     },
-    // include: {
-    //   productFavorite: {
-    //     where: { userId: ctx.me?.id },
-    //     select: { id: true },
-    //   },
-    //   productCart: {
-    //     where: { userId: ctx.me?.id },
-    //     select: { id: true, count: true },
-    //   },
-    // },
-    orderBy: [sortMap[input.sort], { id: 'asc' }],
+    orderBy: [sortMap[input.sort] ?? {price: 'asc'}, { createdAt: 'desc' }, { id: 'asc' }],
     skip: (input.page - 1) * input.limit,
     take: input.limit,
   })

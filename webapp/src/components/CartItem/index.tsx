@@ -39,7 +39,7 @@ const CartItem = ({
               className="fs-5 d-flex justify-content-between align-items-center mb-3"
             >
               <div>{product.title}</div>
-              <div className="fw-bold">{product.price}$</div>
+              <div className="fw-bold">{product.price + ' '}₽</div>
             </Card.Title>
             <div className="d-flex justify-content-between h-100">
               <div className="d-flex flex-column justify-content-between gap-4">

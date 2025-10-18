@@ -1,4 +1,3 @@
-// declare const process: { env?: Record<string, string | undefined> } | undefined
 /* eslint-disable n/no-process-env */
 import { z } from 'zod'
 

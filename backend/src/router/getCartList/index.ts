@@ -3,7 +3,9 @@ import { getCloudinaryUploadUrl } from '@pstore/shared/src/cloudinary'
 import { ExpectedError } from '../../lib/error'
 import { trpcLoggedProcedure } from '../../lib/trpc'
 
-export const getCartListTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) => {
+import { zGetCartListOutput } from './output'
+
+export const getCartListTrpcRoute = trpcLoggedProcedure.output(zGetCartListOutput).query(async ({ ctx }) => {
   if (!ctx.me) {
     throw new ExpectedError('UNAUTHORIZED')
   }
