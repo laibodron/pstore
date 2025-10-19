@@ -41,7 +41,7 @@ export const createOrderTrpcRoute = trpcLoggedProcedure.input(zCreateOrderInput)
     },
     confirmation: {
       type: 'redirect',
-      return_url: 'https://github.com/a2seven/yoocheckout/blob/dev/README.ru.md',
+      return_url: 'http://localhost:8000/profile/orders',
     },
     description: `Заказ №${newOrder.serialNumber}`,
     metadata: {

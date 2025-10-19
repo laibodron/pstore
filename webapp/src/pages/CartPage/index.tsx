@@ -22,15 +22,15 @@ const CartPage = withPageWrapper({
   }),
   title: 'Cart',
   showLoaderOnFetching: false,
-})(({ products }) => {
+})(({ products, me }) => {
   const navigate = useNavigate()
   const { updateCart } = useProductCart()
   const { toggleFavorite } = useProductFavorite()
   const createOrder = trpc.createOrder.useMutation()
   const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
-      phoneNumber: '',
-      email: '',
+      phoneNumber: me?.phoneNumber || '',
+      email: me?.email || '',
       cartItems: products,
     },
     validationSchema: zCreateOrderInput,
@@ -100,9 +100,9 @@ const CartPage = withPageWrapper({
             </Row>
             <Row>
               <Col>
-                <Button onClick={() => setShowForm(!showForm)} className="w-100" variant="success">
+                {/* <Button onClick={() => setShowForm(!showForm)} className="w-100" variant="success">
                   Оформить заказ
-                </Button>
+                </Button> */}
               </Col>
             </Row>
           </Card>

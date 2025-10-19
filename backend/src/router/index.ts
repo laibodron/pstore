@@ -9,6 +9,7 @@ import { createProductTrpcRoute } from './createProduct'
 import { getCartListTrpcRoute } from './getCartList'
 import { getFavoritesTrpcRoute } from './getFavorites'
 import { getMeTrpcRoute } from './getMe'
+import { getMyOrdersTrpcRoute } from './getMyOrders'
 import { getNRandomProductsTrpcRoute } from './getNRandomProducts'
 import { getProductTrpcRoute } from './getProduct'
 import { getProductsTrpcRoute } from './getProducts'
@@ -29,6 +30,7 @@ export const trpcRouter = createTrpcRouter({
   getCartList: getCartListTrpcRoute,
   getFavorites: getFavoritesTrpcRoute,
   getMe: getMeTrpcRoute,
+  getMyOrders: getMyOrdersTrpcRoute,
   getNRandomProducts: getNRandomProductsTrpcRoute,
   getProduct: getProductTrpcRoute,
   getProducts: getProductsTrpcRoute,

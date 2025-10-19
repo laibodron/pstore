@@ -1,10 +1,19 @@
 import { Col, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
+import Accordion from 'react-bootstrap/Accordion'
 
+import HorizontalCard from '../../components/HorizontalCard'
+import OrderItem from '../../components/OrderItem'
 import { withPageWrapper } from '../../lib/pageWrapper'
+import { trpc } from '../../lib/trpc'
 
 const ProfileOrdersPage = withPageWrapper({
+  useQuery: () => trpc.getMyOrders.useQuery(),
+  setProps: ({ queryResult, ctx }) => ({
+    me: ctx.me,
+    orders: queryResult.data.myOrders,
+  }),
   title: 'My Orders',
-})(() => {
+})(({ orders, me }) => {
   return (
     <>
       <Row className="mb-4">
@@ -28,7 +37,36 @@ const ProfileOrdersPage = withPageWrapper({
       <Row>
         <Col>
           {/* Orders will be displayed here */}
-          <p>No orders to display.</p>
+          {orders.length ? (
+            orders.map((el) => (
+              <Accordion>
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <div className="w-100 d-flex justify-content-between me-3">
+                      <div>{`Заказ №${el.serialNumber} от ${el.createdAt.toLocaleDateString()}`}</div>
+                      <div>{`${el.totalPrice} ₽`}</div>
+                    </div>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <div>Статус: {el.status}</div>
+                    <div>Телефон: {el.phoneNumber}</div>
+                    {el.email && <div>Email: {el.email}</div>}
+                    <div>
+                      Ссылка для оплаты:{' '}
+                      <a href={`https://yoomoney.ru/api-pages/v2/payment-confirm/epl?orderId=${el.paymentId}`}>Тык</a>
+                    </div>
+                  </Accordion.Body>
+                  <Accordion.Body>
+                    {el.products.map((product) => (
+                      <OrderItem product={product} />
+                    ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            ))
+          ) : (
+            <p>No orders to display.</p>
+          )}
         </Col>
       </Row>
     </>
