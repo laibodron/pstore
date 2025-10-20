@@ -7,6 +7,7 @@ import { AppContext, createAppContext } from './lib/ctx'
 import { logger } from './lib/logger'
 import { applyPassportToExpressApp } from './lib/passport'
 import { applyTrpcToExpressApp } from './lib/trpc'
+import { applyYookassaToExpressApp } from './services/yookassa/notification'
 import { trpcRouter } from './router'
 
 let ctx: AppContext | null = null
@@ -22,6 +23,7 @@ void (async () => {
 
     applyPassportToExpressApp(expressApp, ctx)
     await applyTrpcToExpressApp(expressApp, ctx, trpcRouter)
+    applyYookassaToExpressApp(expressApp, ctx)
 
     expressApp.use((error: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
       logger.error('express', error)

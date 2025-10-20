@@ -1,7 +1,6 @@
 import { zCreateOrderInput } from '@pstore/backend/src/router/createOrder/input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, Button, Card, Col, Form, Row } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
 
 import CartItem from '../../components/CartItem'
 import PageWithTitle from '../../components/PageWithTitle'
@@ -23,7 +22,6 @@ const CartPage = withPageWrapper({
   title: 'Cart',
   showLoaderOnFetching: false,
 })(({ products, me }) => {
-  const navigate = useNavigate()
   const { updateCart } = useProductCart()
   const { toggleFavorite } = useProductFavorite()
   const createOrder = trpc.createOrder.useMutation()
@@ -49,6 +47,10 @@ const CartPage = withPageWrapper({
     successMessage: 'Продукт успешно создан',
     showValidationAlert: true,
   })
+
+  useEffect(() => {
+    formik.setFieldValue('cartItems', products)
+  }, [products])
 
   const callbacks = {
     onClear: async () => {
@@ -109,7 +111,7 @@ const CartPage = withPageWrapper({
           <Button onClick={() => callbacks.onClear()} variant="danger" className="mb-3">
             Clear
           </Button>
-          <Card className={`mb-3 p-3 fs-6${showForm ? '' : ' d-none'}`}>
+          <Card className={`mb-3 p-3 fs-6${products.length ? '' : ' d-none'}`}>
             <Row>
               <Col>
                 <Form noValidate onSubmit={formik.handleSubmit}>

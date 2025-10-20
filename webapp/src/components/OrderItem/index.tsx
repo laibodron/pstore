@@ -30,9 +30,9 @@ const OrderItem = ({
             <Card.Title as={Link} to={link} className="d-flex justify-content-between align-items-center mb-3 fs-5">
               <div className="w-100">{product.title}</div>
             </Card.Title>
-            <Card.Text>
+            <div>
               <div className="">{`${product.count} шт. x ${product.price} ₽ = ${product.count * product.price} ₽`}</div>
-            </Card.Text>
+            </div>
           </Card.Body>
         </Col>
       </Row>

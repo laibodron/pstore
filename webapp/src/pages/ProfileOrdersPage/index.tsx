@@ -39,7 +39,7 @@ const ProfileOrdersPage = withPageWrapper({
           {/* Orders will be displayed here */}
           {orders.length ? (
             orders.map((el) => (
-              <Accordion>
+              <Accordion key={el.id}>
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>
                     <div className="w-100 d-flex justify-content-between me-3">
@@ -58,7 +58,7 @@ const ProfileOrdersPage = withPageWrapper({
                   </Accordion.Body>
                   <Accordion.Body>
                     {el.products.map((product) => (
-                      <OrderItem product={product} />
+                      <OrderItem key={product.id} product={product} />
                     ))}
                   </Accordion.Body>
                 </Accordion.Item>
