@@ -14,6 +14,22 @@ export const getProductsByIdTrpcRoute = trpcLoggedProcedure
           in: input.ids,
         },
       },
+      include: {
+        ...(ctx.me && {
+          productFavorite: {
+            where: {
+              userId: ctx.me?.id,
+            },
+          },
+        }),
+        ...(ctx.me && {
+          productCart: {
+            where: {
+              userId: ctx.me?.id,
+            },
+          },
+        }),
+      },
     })
 
     const count = productsById.length.toString()
@@ -25,7 +41,23 @@ export const getProductsByIdTrpcRoute = trpcLoggedProcedure
       images: product.images.length
         ? product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'preview'))
         : ['https://static.baza.farpost.ru/v/1436587505475_bulletin'],
+      description: product.description,
+      article: product.article,
+      createdAt: product.createdAt,
+      isFavoriteByMe: product.productFavorite?.length > 0,
+      isInCart: product.productCart?.length > 0,
     }))
 
     return { productsById: pickedProductsById, count }
   })
+
+// isFavoriteByMe: boolean;
+//   isInCart: boolean;
+//   createdAt: Date;
+//   article: string;
+//   description: string | null;
+
+//   id: string;
+//   title: string;
+//   price: number;
+//   images: string[];

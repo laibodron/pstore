@@ -13,5 +13,5 @@ export const zCartItem = z.object({
 })
 
 export const zGetCartListOutput = z.object({
-  cartList: z.array(zCartItem),
+  cartList: z.array(zCartItem).min(0),
 })

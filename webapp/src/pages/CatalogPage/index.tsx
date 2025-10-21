@@ -1,5 +1,4 @@
 import { zGetProductsInput } from '@pstore/backend/src/router/getProducts/input'
-import { useEffect, useState } from 'react'
 import { Accordion, Button, Col, Form, Row } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
 
@@ -17,7 +16,7 @@ const CatalogPage = withPageWrapper({
   }),
 
   title: 'Catalog',
-  showLoaderOnFetching: false,
+  showLoaderOnFetching: true,
 })(({ me }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get('page') || 1)

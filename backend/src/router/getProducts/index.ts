@@ -17,14 +17,22 @@ export const getProductsTrpcRoute = trpcLoggedProcedure.input(zGetProductsInput)
   const count = await ctx.prisma.product.count()
   const productsRaw = await ctx.prisma.product.findMany({
     include: {
-      _count: {
-        select: {
-          productCart: true,
-          productFavorite: true,
+      ...(ctx.me && {
+        productFavorite: {
+          where: {
+            userId: ctx.me?.id,
+          },
         },
-      },
+      }),
+      ...(ctx.me && {
+        productCart: {
+          where: {
+            userId: ctx.me?.id,
+          },
+        },
+      }),
     },
-    orderBy: [sortMap[input.sort] ?? {price: 'asc'}, { createdAt: 'desc' }, { id: 'asc' }],
+    orderBy: [sortMap[input.sort] ?? { price: 'asc' }, { createdAt: 'desc' }, { id: 'asc' }],
     skip: (input.page - 1) * input.limit,
     take: input.limit,
   })
@@ -34,9 +42,9 @@ export const getProductsTrpcRoute = trpcLoggedProcedure.input(zGetProductsInput)
       ? product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'preview'))
       : ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
     return {
-      ...omit(product, ['_count']),
-      isFavoriteByMe: product._count.productFavorite > 0,
-      isInCart: product._count.productCart > 0,
+      ...omit(product, ['productCart', 'productFavorite']),
+      isFavoriteByMe: product.productFavorite?.length > 0,
+      isInCart: product.productCart?.length > 0,
     }
   })
 

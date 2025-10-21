@@ -35,7 +35,7 @@ export const getMyOrdersTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) =>
         ? product.product.images.map((el) => getCloudinaryUploadUrl(el, 'image', 'preview'))
         : ['https://static.baza.farpost.ru/v/1436587505475_bulletin'],
     })),
-    paymentId: order.paymentId,
+    ...(order.status === 'CREATED' ? { paymentId: order.paymentId } : {}),
     phoneNumber: order.phoneNumber,
     serialNumber: order.serialNumber,
     status: order.status,

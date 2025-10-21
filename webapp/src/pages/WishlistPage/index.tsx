@@ -1,23 +1,42 @@
 import PageWithTitle from '../../components/PageWithTitle'
 import ProductCard from '../../components/ProductCard'
+import { useMe } from '../../lib/ctx'
 import { withPageWrapper } from '../../lib/pageWrapper'
+import useLocalWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
 
 const WishlistPage = withPageWrapper({
   useQuery: () => {
-    return trpc.getFavorites.useQuery()
+    const me = useMe()
+    if (me) {
+      return trpc.getFavorites.useQuery()
+    }
   },
-  setProps: ({ queryResult, ctx, checkExists }) => ({
-    products: checkExists(queryResult.data.favorites, 'Products By Id not found'),
-    count: checkExists(queryResult.data.count, 'Counts not found'),
-    me: ctx.me,
-  }),
+  setProps: ({ queryResult, ctx }) => {
+    if (ctx.me) {
+      return {
+        products: queryResult?.data.favorites,
+        count: queryResult?.data.count,
+        me: ctx.me,
+      }
+    } else {
+      const ids = useLocalWishlistState((state) => state.items)
+      const data = trpc.getProductsById.useQuery({ ids: ids.map((el) => el.id) })
+      const products = data.data?.productsById
+      const count = data.data?.count
+      return {
+        products,
+        count,
+        me: ctx.me,
+      }
+    }
+  },
   title: 'Wishlist',
   showLoaderOnFetching: false,
 })(({ products, count, me }) => {
   return (
     <PageWithTitle title="Wishlist" subtitle={`${count} product`}>
-      {products.map((product) => (
+      {products?.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
     </PageWithTitle>

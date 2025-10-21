@@ -1,7 +1,7 @@
+import { useMemo } from 'react'
 import { Col, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
 import Accordion from 'react-bootstrap/Accordion'
 
-import HorizontalCard from '../../components/HorizontalCard'
 import OrderItem from '../../components/OrderItem'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { trpc } from '../../lib/trpc'
@@ -13,7 +13,18 @@ const ProfileOrdersPage = withPageWrapper({
     orders: queryResult.data.myOrders,
   }),
   title: 'My Orders',
+  authorizedOnly: true,
 })(({ orders, me }) => {
+  const statuses = useMemo(
+    () => ({
+      CREATED: 'Создан',
+      PAID: 'Оплачено',
+      SHIPPED: 'Отправлено',
+      COMPLETED: 'Выполнено',
+      CANCELLED: 'Отклонено',
+    }),
+    []
+  )
   return (
     <>
       <Row className="mb-4">
@@ -48,13 +59,15 @@ const ProfileOrdersPage = withPageWrapper({
                     </div>
                   </Accordion.Header>
                   <Accordion.Body>
-                    <div>Статус: {el.status}</div>
+                    <div>Статус: {statuses[el.status]}</div>
                     <div>Телефон: {el.phoneNumber}</div>
                     {el.email && <div>Email: {el.email}</div>}
-                    <div>
-                      Ссылка для оплаты:{' '}
-                      <a href={`https://yoomoney.ru/api-pages/v2/payment-confirm/epl?orderId=${el.paymentId}`}>Тык</a>
-                    </div>
+                    {el.paymentId && (
+                      <div>
+                        Ссылка для оплаты:{' '}
+                        <a href={`https://yoomoney.ru/api-pages/v2/payment-confirm/epl?orderId=${el.paymentId}`}>Тык</a>
+                      </div>
+                    )}
                   </Accordion.Body>
                   <Accordion.Body>
                     {el.products.map((product) => (

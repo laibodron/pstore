@@ -6,13 +6,14 @@ import { trpcLoggedProcedure } from '../../lib/trpc'
 import { zGetCartListOutput } from './output'
 
 export const getCartListTrpcRoute = trpcLoggedProcedure.output(zGetCartListOutput).query(async ({ ctx }) => {
-  if (!ctx.me) {
-    throw new ExpectedError('UNAUTHORIZED')
-  }
+  // if (!ctx.me) {
+  // return []
+  // throw new ExpectedError('UNAUTHORIZED')
+  // }
 
   const rawCartList = await ctx.prisma.productCart.findMany({
     where: {
-      userId: ctx.me.id,
+      userId: ctx.me?.id || '',
     },
     include: {
       product: {

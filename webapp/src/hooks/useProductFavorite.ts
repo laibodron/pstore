@@ -1,6 +1,11 @@
+import { useMe } from '../lib/ctx'
+import useLocalWishlistState from '../lib/store/useWishlist'
 import { trpc } from '../lib/trpc'
 
 export const useProductFavorite = () => {
+  const me = useMe()
+  const toggleLocalFavorite = useLocalWishlistState((state) => state.toggleItem)
+
   const trpcUtils = trpc.useUtils()
   const mutation = trpc.setItemFavorite.useMutation({
     onMutate: async ({ productId, isFavoriteByMe }) => {
@@ -64,7 +69,11 @@ export const useProductFavorite = () => {
   })
 
   const toggleFavorite = async ({ productId, isFavoriteByMe }: { productId: string; isFavoriteByMe: boolean }) => {
-    await mutation.mutateAsync({ productId, isFavoriteByMe })
+    if (me) {
+      await mutation.mutateAsync({ productId, isFavoriteByMe })
+    } else {
+      toggleLocalFavorite(productId)
+    }
   }
 
   return { toggleFavorite, isPending: mutation.isPending }

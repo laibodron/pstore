@@ -1,15 +1,17 @@
 import { getCloudinaryUploadUrl } from '@pstore/shared/src/cloudinary'
 
 import { ExpectedError } from '../../lib/error'
+import { logger } from '../../lib/logger'
 import { trpcLoggedProcedure } from '../../lib/trpc'
 
 export const getFavoritesTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) => {
-  if (!ctx.me) {
-    throw new ExpectedError('UNAUTHORIZED')
-  }
-
+  // if (!ctx.me) {
+  // return []
+  //   throw new ExpectedError('UNAUTHORIZED')
+  // }
+  // logger.info('getFavorites', '', {me: ctx.me})
   const rawFavorites = await ctx.prisma.productFavorite.findMany({
-    where: { userId: ctx.me?.id },
+    where: { userId: ctx.me?.id || '' },
     include: {
       product: {
         select: {
@@ -29,7 +31,7 @@ export const getFavoritesTrpcRoute = trpcLoggedProcedure.query(async ({ ctx }) =
     },
     orderBy: { createdAt: 'desc' },
   })
-
+  // logger.info('getFavorites', '', {me: ctx.me, rawFavorites})
   const favorites = rawFavorites.map((fav) => ({
     id: fav.product.id,
     title: fav.product.title,

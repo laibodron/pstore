@@ -2,6 +2,7 @@ import { trpc } from '../lib/trpc'
 
 export const useProductCart = () => {
   const trpcUtils = trpc.useUtils()
+
   const mutation = trpc.addToCart.useMutation({
     onMutate: async (vars) => {
       await Promise.all([trpcUtils.getCartList.cancel(), trpcUtils.getProducts.cancel()])
