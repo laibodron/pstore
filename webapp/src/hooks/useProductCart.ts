@@ -1,8 +1,12 @@
+import type { TrpcRouterOutput } from '@pstore/backend/src/router'
+
+import useCartStore from '../lib/store/useCart'
 import { trpc } from '../lib/trpc'
 
-export const useProductCart = () => {
-  const trpcUtils = trpc.useUtils()
+export const useProductCart = ({ me }: { me: TrpcRouterOutput['getMe']['me'] }) => {
+  const setItem = useCartStore((state) => state.setItem)
 
+  const trpcUtils = trpc.useUtils()
   const mutation = trpc.addToCart.useMutation({
     onMutate: async (vars) => {
       await Promise.all([trpcUtils.getCartList.cancel(), trpcUtils.getProducts.cancel()])
@@ -77,7 +81,11 @@ export const useProductCart = () => {
   })
 
   const updateCart = async ({ productId, count }: { productId: string; count: number }) => {
-    await mutation.mutateAsync({ productId, count })
+    if (me) {
+      await mutation.mutateAsync({ productId, count })
+    } else {
+      setItem(productId, count)
+    }
   }
 
   return { updateCart, isPending: mutation.isPending }

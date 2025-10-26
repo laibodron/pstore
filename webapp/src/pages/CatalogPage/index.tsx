@@ -34,10 +34,6 @@ const CatalogPage = withPageWrapper({
     { placeholderData: (previousData) => previousData }
   )
 
-  // useEffect(() => {
-  //   console.log('formik.values.sort ', formik.values.sort)
-  // }, [formik.values.sort])
-
   const products = data?.products ?? []
   const count = data?.count ?? 0
   const totalCountPages = data?.totalCountPages ?? 0

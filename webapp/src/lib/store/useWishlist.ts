@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 type LocalWishlistState = {
   items: { id: string }[]
@@ -9,30 +10,35 @@ type LocalWishlistState = {
   toggleItem: (id: string) => void
 }
 
-const useLocalWishlistState = create<LocalWishlistState>((set, get) => {
-  return {
-    items: [],
-    isExist: (id: string) => {
-      return !!get().items.find((el) => el.id === id)
-    },
-    toggleItem: (id: string) => {
-      if (get().isExist(id)) {
-        get().removeItem(id)
-      } else {
-        get().addItem(id)
+const useLocalWishlistState = create<LocalWishlistState>()(
+  persist(
+    (set, get) => {
+      return {
+        items: [],
+        isExist: (id: string) => {
+          return !!get().items.find((el) => el.id === id)
+        },
+        toggleItem: (id: string) => {
+          if (get().isExist(id)) {
+            get().removeItem(id)
+          } else {
+            get().addItem(id)
+          }
+        },
+        addItem: (id: string) => {
+          set((state) => ({ items: [...state.items, { id }] }))
+        },
+        setItem: (id: string) => {},
+        removeItem: (id: string) => {
+          if (get().isExist(id)) {
+            set((state) => ({ items: state.items.filter((el) => el.id !== id) }))
+          }
+        },
+        clearWishlist: () => set({ items: [] }),
       }
     },
-    addItem: (id: string) => {
-      set((state) => ({ items: [...state.items, { id }] }))
-    },
-    setItem: (id: string) => {},
-    removeItem: (id: string) => {
-      if (get().isExist(id)) {
-        set((state) => ({ items: state.items.filter((el) => el.id !== id) }))
-      }
-    },
-    clearWishlist: () => set({ items: [] }),
-  }
-})
+    { name: 'wishlist-storage' }
+  )
+)
 
 export default useLocalWishlistState

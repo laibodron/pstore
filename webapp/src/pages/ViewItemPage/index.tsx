@@ -9,28 +9,9 @@ import { useProductCart } from '../../hooks/useProductCart'
 import { useProductFavorite } from '../../hooks/useProductFavorite'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getCartRoute, getViewItemRoute } from '../../lib/routes'
+import useCartStore from '../../lib/store/useCart'
+import useLocalWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
-
-const FavoriteButton = ({ product }: { product: NonNullable<TrpcRouterOutput['getProduct']['product']> }) => {
-  const { toggleFavorite, isPending } = useProductFavorite()
-  return (
-    <>
-      <Icon
-        onClick={() => {
-          toggleFavorite({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe }).then(() => {
-            if (!product.isFavoriteByMe) {
-              // log it to mixpanel
-            }
-          })
-        }}
-        name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
-        size={24}
-        className="me-4 "
-        style={{ cursor: 'pointer', opacity: isPending ? 0.5 : 1 }}
-      />
-    </>
-  )
-}
 
 const ViewItemPage = withPageWrapper({
   useQuery: () => {
@@ -43,9 +24,14 @@ const ViewItemPage = withPageWrapper({
   }),
   showLoaderOnFetching: false,
   title: ({ product }) => product.title,
-})(({ product, me }) => {
+})(({ product: serverProduct, me }) => {
   const navigate = useNavigate()
-  const { updateCart, isPending: isPendingCart } = useProductCart()
+  const { updateCart, isPending: isPendingCart } = useProductCart({ me })
+  const { toggleFavorite, isPending } = useProductFavorite({ me })
+  const isFavoriteByMe: boolean = useLocalWishlistState((state) => state.isExist(serverProduct.id))
+  const isInCart: boolean = useCartStore((state) => state.qInCart(serverProduct.id)) > 0
+
+  const product = me ? serverProduct : { ...serverProduct, isInCart, isFavoriteByMe }
 
   return (
     <PageWithTitle title={product.title}>
@@ -62,7 +48,19 @@ const ViewItemPage = withPageWrapper({
         <Col className="d-flex justify-content-end">
           <div className="me-4 fs-3 h-auto">{product.price + ' '}₽</div>
           <div>
-            <FavoriteButton product={product} />
+            <Icon
+              onClick={() => {
+                toggleFavorite({ productId: product.id, isFavoriteByMe: !product.isFavoriteByMe }).then(() => {
+                  if (!product.isFavoriteByMe) {
+                    // log it to mixpanel
+                  }
+                })
+              }}
+              name={product.isFavoriteByMe ? 'dashedHeart' : 'heart'}
+              size={24}
+              className="me-4 "
+              style={{ cursor: 'pointer', opacity: isPending ? 0.5 : 1 }}
+            />
             <Button
               onClick={async () => {
                 if (product.isInCart) {

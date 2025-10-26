@@ -9,7 +9,6 @@ import { trpc } from '../../lib/trpc'
 const LogInModal = ({ open, close }: { open: boolean; close: () => void }) => {
   const { closeModal } = useModalStore()
   const trpcUtils = trpc.useUtils()
-
   const signIn = trpc.signIn.useMutation()
 
   const { formik, buttonProps, alertProps } = useForm({

@@ -1,29 +1,52 @@
 import { zCreateOrderInput } from '@pstore/backend/src/router/createOrder/input'
-import { useEffect, useState } from 'react'
+import omit from '@pstore/shared/src/omit'
+import { useEffect, useMemo, useState } from 'react'
 import { Alert, Button, Card, Col, Form, Row } from 'react-bootstrap'
 
 import CartItem from '../../components/CartItem'
 import PageWithTitle from '../../components/PageWithTitle'
 import { useProductCart } from '../../hooks/useProductCart'
 import { useProductFavorite } from '../../hooks/useProductFavorite'
+import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import { getViewItemRoute } from '../../lib/routes'
+import useCartStore from '../../lib/store/useCart'
 import { trpc } from '../../lib/trpc'
 
 const CartPage = withPageWrapper({
   useQuery: () => {
-    return trpc.getCartList.useQuery()
+    const me = useMe()
+    if (me) {
+      return trpc.getCartList.useQuery()
+    }
+    return undefined
   },
-  setProps: ({ queryResult, ctx }) => ({
-    products: queryResult.data.cartList,
-    me: ctx.me,
-  }),
+  setProps: ({ queryResult, ctx }) => {
+    return {
+      products: ctx.me ? (queryResult?.data.cartList ?? []) : [],
+      me: ctx.me,
+    }
+  },
   title: 'Cart',
   showLoaderOnFetching: false,
-})(({ products, me }) => {
-  const { updateCart } = useProductCart()
-  const { toggleFavorite } = useProductFavorite()
+})(({ products: serverProducts, me }) => {
+  const itemsMap = useCartStore((state) => state.items)
+  const items = useMemo(() => Array.from(itemsMap, ([id, quantity]) => ({ id, quantity })), [itemsMap])
+
+  const { data: localProductsData } = trpc.getProductsById.useQuery({ ids: items.map((el) => el.id) }, { enabled: !me })
+
+  const products = useMemo(() => {
+    return me
+      ? serverProducts
+      : (localProductsData?.productsById ?? []).map((el) => ({
+          ...omit(el, ['isInCart']),
+          countInCart: itemsMap.get(el.id) ?? 0,
+        }))
+  }, [me, serverProducts, itemsMap, localProductsData])
+
+  const { updateCart } = useProductCart({ me })
+  const { toggleFavorite } = useProductFavorite({ me })
   const createOrder = trpc.createOrder.useMutation()
   const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
@@ -33,8 +56,6 @@ const CartPage = withPageWrapper({
     },
     validationSchema: zCreateOrderInput,
     onSubmit: async (values) => {
-      // await createProduct.mutateAsync(values)
-      // console.log('zxc')
       const result = await createOrder.mutateAsync({
         cartItems: values.cartItems,
         phoneNumber: values.phoneNumber,

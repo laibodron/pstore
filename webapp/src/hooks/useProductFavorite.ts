@@ -1,9 +1,9 @@
-import { useMe } from '../lib/ctx'
+import type { TrpcRouterOutput } from '@pstore/backend/src/router'
+
 import useLocalWishlistState from '../lib/store/useWishlist'
 import { trpc } from '../lib/trpc'
 
-export const useProductFavorite = () => {
-  const me = useMe()
+export const useProductFavorite = ({ me }: { me: TrpcRouterOutput['getMe']['me'] }) => {
   const toggleLocalFavorite = useLocalWishlistState((state) => state.toggleItem)
 
   const trpcUtils = trpc.useUtils()

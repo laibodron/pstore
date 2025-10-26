@@ -34,7 +34,7 @@ void (async () => {
       res.status(500).send('Internal server error')
     })
 
-    expressApp.listen(env.PORT, () => {
+    expressApp.listen(+env.PORT, '0.0.0.0', () => {
       logger.info('express', `Server is running on http://localhost:${env.PORT}`)
     })
   } catch (error) {

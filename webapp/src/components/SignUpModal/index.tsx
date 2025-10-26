@@ -3,14 +3,19 @@ import { zPasswordsMustBeTheSame, zStringRequired } from '@pstore/shared/src/zod
 import Cookies from 'js-cookie'
 import { Alert, Button, Form, Modal } from 'react-bootstrap'
 
+import { useMe } from '../../lib/ctx'
 import { useForm } from '../../lib/form'
 import { useModalStore } from '../../lib/store/useModal'
+import useLocalWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
 
 const SignUpModal = ({ open, close }: { open: boolean; close: () => void }) => {
   const { closeModal } = useModalStore()
   const trpcUtils = trpc.useUtils()
   const signUp = trpc.signUp.useMutation()
+  // const wishlist = useLocalWishlistState(state => )
+  const mutateWishlist = trpc.setItemFavorite.useMutation()
+  const me = useMe()
 
   const { formik, buttonProps, alertProps } = useForm({
     initialValues: {
@@ -31,6 +36,7 @@ const SignUpModal = ({ open, close }: { open: boolean; close: () => void }) => {
       const { token, userId } = await signUp.mutateAsync(values)
       Cookies.set('token', token, { expires: 99999 })
       void trpcUtils.invalidate()
+      console.log(me)
       closeModal()
     },
     resetOnSuccess: false,

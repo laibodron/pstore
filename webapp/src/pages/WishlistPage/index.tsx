@@ -1,5 +1,8 @@
+import { Button } from 'react-bootstrap'
+
 import PageWithTitle from '../../components/PageWithTitle'
 import ProductCard from '../../components/ProductCard'
+import { useProductFavorite } from '../../hooks/useProductFavorite'
 import { useMe } from '../../lib/ctx'
 import { withPageWrapper } from '../../lib/pageWrapper'
 import useLocalWishlistState from '../../lib/store/useWishlist'
@@ -11,6 +14,7 @@ const WishlistPage = withPageWrapper({
     if (me) {
       return trpc.getFavorites.useQuery()
     }
+    return undefined
   },
   setProps: ({ queryResult, ctx }) => {
     if (ctx.me) {
@@ -34,11 +38,23 @@ const WishlistPage = withPageWrapper({
   title: 'Wishlist',
   showLoaderOnFetching: false,
 })(({ products, count, me }) => {
+  const { toggleFavorite } = useProductFavorite({ me })
+
   return (
     <PageWithTitle title="Wishlist" subtitle={`${count} product`}>
-      {products?.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+      <>
+        <Button
+          onClick={async () =>
+            await Promise.all(products?.map((el) => toggleFavorite({ productId: el.id, isFavoriteByMe: false })) ?? [])
+          }
+          variant="danger"
+        >
+          Clear
+        </Button>
+        {products?.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </>
     </PageWithTitle>
   )
 })

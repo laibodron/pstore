@@ -32,8 +32,8 @@ export const getProductTrpcRoute = trpcLoggedProcedure.input(zGetProductInput).q
     : ['https://static.baza.farpost.ru/v/1436587505475_bulletin']
   const product = {
     ...omit(rawProduct, ['productFavorite', 'productCart']),
-    isFavoriteByMe: rawProduct.productFavorite.length > 0,
-    isInCart: rawProduct.productCart.length > 0,
+    isFavoriteByMe: ctx.me ? rawProduct.productFavorite.length > 0 : false,
+    isInCart: ctx.me ? rawProduct.productCart.length > 0 : false,
   }
 
   return { product }
