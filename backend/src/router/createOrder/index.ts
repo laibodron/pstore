@@ -1,7 +1,6 @@
-import { type ICreatePayment, YooCheckout } from '@a2seven/yoo-checkout'
-
 import { ExpectedError } from '../../lib/error'
 import { trpcLoggedProcedure } from '../../lib/trpc'
+import { yooKassaCreatePayment } from '../../services/yookassa/createPayment'
 
 import { zCreateOrderInput } from './input'
 
@@ -11,7 +10,7 @@ export const createOrderTrpcRoute = trpcLoggedProcedure.input(zCreateOrderInput)
       email: input.email,
       phoneNumber: input.phoneNumber,
       status: 'CREATED',
-      totalPrice: input.cartItems.reduce((prevVal, el) => prevVal + el.price * el.countInCart, 0),
+      totalPrice: input.cartItems.reduce((prevVal, el) => prevVal + el.price * el.countInCart, 0), //todo change it
       userId: ctx.me?.id,
       orderStructures: {
         create: input.cartItems.map((el) => ({
@@ -26,30 +25,13 @@ export const createOrderTrpcRoute = trpcLoggedProcedure.input(zCreateOrderInput)
     },
   })
 
-  const checkout = new YooCheckout({
-    shopId: '1188560',
-    secretKey: 'test_6i4mz0k6uRzg3KEjEJxJPmsml6Nj03k0cAjZRe6qNS8',
-  })
-  const createPayload: ICreatePayment = {
-    amount: {
-      value: String(newOrder.totalPrice),
-      currency: 'RUB',
-    },
-    capture: true,
-    payment_method_data: {
-      type: 'bank_card',
-    },
-    confirmation: {
-      type: 'redirect',
-      return_url: 'http://localhost:8000/profile/orders',
-    },
-    description: `Заказ №${newOrder.serialNumber}`,
-    metadata: {
-      orderId: newOrder.id,
-    },
-  }
   try {
-    const payment = await checkout.createPayment(createPayload, newOrder.id)
+    const payment = await yooKassaCreatePayment({
+      amountVal: String(newOrder.totalPrice),
+      description: `Заказ №${newOrder.serialNumber}`,
+      metadataOrderId: newOrder.id,
+      idempotenceKey: newOrder.id,
+    })
     await ctx.prisma.order.update({
       where: {
         id: newOrder.id,
