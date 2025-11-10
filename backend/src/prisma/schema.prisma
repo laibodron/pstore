@@ -21,6 +21,12 @@ model User {
   wishlist    ProductFavorite[]
   productCart ProductCart[]
   orders      Order[]
+  permissions UserPermission[]
+}
+
+enum UserPermission {
+  ALL
+  EDIT_PRODUCT
 }
 
 model Product {

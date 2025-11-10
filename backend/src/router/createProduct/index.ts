@@ -6,6 +6,10 @@ import { zCreateProductInput } from './input'
 export const createProductTrpcRoute = trpcLoggedProcedure
   .input(zCreateProductInput)
   .mutation(async ({ input, ctx }) => {
+    if (ctx.me?.permissions?.includes('ALL') !== true) {
+      throw new ExpectedError('PERMISSION DENIED')
+    }
+
     const exProduct = await ctx.prisma.product.findFirst({
       where: {
         article: input.article,

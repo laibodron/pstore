@@ -3,19 +3,22 @@ import { Link } from 'react-router-dom'
 
 import { useMe } from '../../lib/ctx'
 import * as routes from '../../lib/routes'
+import useCityState from '../../lib/store/useCity'
 import { useModalStore } from '../../lib/store/useModal'
 import { Icon } from '../Icon'
 
 const Header = () => {
   const me = useMe()
-  const { openLogin, openSignUp } = useModalStore()
+  const { openLogin, openSignUp, openCity } = useModalStore()
+  const { city } = useCityState()
+
   return (
     <>
       <Navbar bg="secondary" variant="dark" expand="lg" className="py-2 text-light">
         <Container className="d-flex justify-content-between align-items-center">
-          <Nav.Link as={Link} to="/">
+          <Nav.Link onClick={openCity}>
             <Icon size={24} name="location" />
-            City
+            {city}
           </Nav.Link>
           <div className="d-flex gap-4">
             <Nav.Link as={Link} to="/">

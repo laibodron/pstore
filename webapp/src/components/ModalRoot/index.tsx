@@ -6,11 +6,12 @@ import { useModalStore } from '../../lib/store/useModal'
 import useLocalWishlistState from '../../lib/store/useWishlist'
 import { trpc } from '../../lib/trpc'
 import ChangePasswordModal from '../ChangePasswordModal'
+import CityModal from '../CityModal'
 import LogInModal from '../LogInModal'
 import SignUpModal from '../SignUpModal'
 
 const ModalRoot = () => {
-  const { isOpenLogin, isOpenSignUp, isOpenChangePassword, closeModal } = useModalStore()
+  const { isOpenLogin, isOpenSignUp, isOpenChangePassword, isOpenCity, closeModal } = useModalStore()
   const trpcUtils = trpc.useUtils()
   const me = useMe()
   const mutateCart = trpc.addToCart.useMutation()
@@ -48,6 +49,7 @@ const ModalRoot = () => {
       <LogInModal open={isOpenLogin} close={closeModal} />
       <SignUpModal open={isOpenSignUp} close={closeModal} />
       <ChangePasswordModal open={isOpenChangePassword} close={closeModal} />
+      <CityModal open={isOpenCity} close={closeModal} />
     </>
   )
 }
