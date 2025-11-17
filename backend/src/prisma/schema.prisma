@@ -29,6 +29,13 @@ enum UserPermission {
   EDIT_PRODUCT
 }
 
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  products  Product[]
+}
+
 model Product {
   id              String            @id @default(uuid())
   article         String            @unique
@@ -37,6 +44,8 @@ model Product {
   createdAt       DateTime          @default(now())
   description     String?
   images          String[]          @default([])
+  categoryId      String?
+  category        Category?         @relation(fields: [categoryId], references: [id])
   productFavorite ProductFavorite[]
   productCart     ProductCart[]
   orderStructures OrderStructure[]

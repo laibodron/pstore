@@ -9,7 +9,7 @@ import useCartStore from '../../lib/store/useCart'
 import useLocalWishlistState from '../../lib/store/useWishlist'
 import HorizontalCard from '../HorizontalCard'
 
-const ProductCard = ({ product }: { product: TrpcRouterOutput['getProduct']['product'] }) => {
+const ProductCard = ({ product }: { product: Omit<TrpcRouterOutput['getProduct']['product'], 'categoryId'> }) => {
   const me = useMe()
   const { toggleFavorite, isPending: favoriteIsPending } = useProductFavorite({ me })
   const { updateCart, isPending: cartIsPending } = useProductCart({ me })

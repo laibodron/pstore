@@ -13,7 +13,7 @@ const HorizontalCard = ({
   heartLoading = false,
   cartLoading = false,
 }: {
-  product: TrpcRouterOutput['getProduct']['product']
+  product: Omit<TrpcRouterOutput['getProduct']['product'], 'categoryId'>
   link?: string
   onBuy?: () => void
   onAddToWishlist?: () => Promise<void> | void
